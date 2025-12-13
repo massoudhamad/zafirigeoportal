@@ -1,0 +1,34 @@
+FROM geonode/geonode-base:latest-ubuntu-24.04
+LABEL GeoNode development team
+
+RUN mkdir -p /usr/src/zafirigeoportal
+
+RUN apt-get update -y && apt-get install curl wget unzip gnupg2 locales -y
+
+RUN sed -i -e 's/# C.UTF-8 UTF-8/C.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
+COPY src /usr/src/zafirigeoportal/
+WORKDIR /usr/src/zafirigeoportal
+
+COPY src/wait-for-databases.sh /usr/bin/wait-for-databases
+RUN chmod +x /usr/bin/wait-for-databases
+RUN chmod +x /usr/src/zafirigeoportal/tasks.py \
+    && chmod +x /usr/src/zafirigeoportal/entrypoint.sh
+
+COPY src/celery.sh /usr/bin/celery-commands
+RUN chmod +x /usr/bin/celery-commands
+
+COPY src/celery-cmd /usr/bin/celery-cmd
+RUN chmod +x /usr/bin/celery-cmd
+
+RUN yes w | pip install --src /usr/src -r requirements.txt &&\
+    yes w | pip install -e .
+
+RUN apt-get autoremove --purge &&\
+    apt-get clean &&\
+    rm -rf /var/lib/apt/lists/*
+
+EXPOSE 8000
