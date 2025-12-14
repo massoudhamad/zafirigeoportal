@@ -1,0 +1,719 @@
+{% load i18n avatar_tags %}
+{% load static %}
+{% load account socialaccount %}
+{% load base_tags %}
+{% load client_lib_tags %}
+<!DOCTYPE html>
+<html lang="en" class="{% block html_class %}{% endblock %}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta Http-Equiv="Cache-Control" Content="no-cache">
+    <meta Http-Equiv="Pragma" Content="no-cache">
+    <meta Http-Equiv="Expires" Content="0">
+
+    <title>{% block title %}ZAFIRI Marine Atlas{% endblock %}</title>
+
+    <link rel="shortcut icon" href="{% static 'img/zafiri_favicon.png' %}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- GeoNode CSS -->
+    <link href="{% static "lib/css/ol.css" %}" rel="stylesheet" />
+    {% if DEBUG_STATIC %}
+        <link href="{% static "lib/css/jquery.dataTables.css" %}" rel="stylesheet" />
+        <link href="{% static "lib/css/select2.css" %}" rel="stylesheet"/>
+        <link href="{% static "lib/css/bootstrap.css" %}" rel="stylesheet"/>
+        <link href="{% static "lib/css/bootstrap-treeview.css" %}" rel="stylesheet"/>
+        <link href="{% static "lib/css/jquery-ui.theme.min.css" %}" rel="stylesheet"/>
+        <link href="{% static "lib/css/jquery-ui.structure.min.css" %}" rel="stylesheet"/>
+    {% else %}
+        <link href="{% static "lib/css/assets.min.css" %}" rel="stylesheet"/>
+    {% endif %}
+    <link href="{% static "geonode/css/base.css" %}" rel="stylesheet"/>
+
+    <!-- ZAFIRI Theme CSS -->
+    <link href="{% static 'css/zafiri_geonode_theme.css' %}" rel="stylesheet" />
+
+    {% block head %}
+    {% endblock %}
+
+    {% block extra_head %}
+    {% endblock %}
+
+    <style>
+      /* ============================================
+         ZAFIRI Base Template Styles
+         ============================================ */
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        padding-top: 64px !important;
+        background: #f8f9fa;
+      }
+
+      /* Hide GeoNode's default navbar completely */
+      .navbar-inverse.navbar-fixed-top,
+      nav.navbar.navbar-inverse {
+        display: none !important;
+      }
+
+      /* Main content adjustments */
+      #wrap {
+        padding-top: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+      }
+
+      /* Form Styling */
+      .form-control {
+        border-radius: 8px !important;
+        border: 1px solid #dce4ec !important;
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .form-control:focus {
+        border-color: #1a5f7a !important;
+        box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.15) !important;
+        outline: none !important;
+      }
+
+      /* Button styling */
+      .btn-primary {
+        background: linear-gradient(135deg, #1a5f7a 0%, #17a2b8 100%) !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(26, 95, 122, 0.3) !important;
+      }
+
+      /* Card/Panel styling */
+      .panel {
+        border-radius: 12px !important;
+        border: 1px solid #e9ecef !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+      }
+
+      .panel-heading {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+        color: #ffffff !important;
+        border-radius: 12px 12px 0 0 !important;
+        border: none !important;
+      }
+
+      /* Footer */
+      footer {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+        color: #ffffff !important;
+        margin-top: 40px;
+        padding: 30px 0 !important;
+      }
+
+      footer a {
+        color: rgba(255, 255, 255, 0.8) !important;
+      }
+
+      footer a:hover {
+        color: #17a2b8 !important;
+      }
+
+      footer ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      footer ul li:first-child {
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 10px;
+      }
+
+      /* Page title styling */
+      h1, h2, h3 {
+        color: #0d3d4d;
+      }
+
+      /* Alert styling */
+      .alert {
+        border-radius: 10px !important;
+        border: none !important;
+        border-left: 4px solid !important;
+      }
+
+      .alert-info {
+        background: rgba(23, 162, 184, 0.1) !important;
+        border-left-color: #17a2b8 !important;
+        color: #0d3d4d !important;
+      }
+
+      .alert-success {
+        background: rgba(39, 174, 96, 0.1) !important;
+        border-left-color: #27ae60 !important;
+      }
+
+      .alert-warning {
+        background: rgba(243, 156, 18, 0.1) !important;
+        border-left-color: #f39c12 !important;
+      }
+
+      .alert-danger {
+        background: rgba(231, 76, 60, 0.1) !important;
+        border-left-color: #e74c3c !important;
+      }
+    </style>
+  </head>
+
+  <body class="{% block body_class %}{% endblock %} {% block body_extra_class %}{% endblock %}">
+    <!-- Loading Mask -->
+    <div class='lmask'></div>
+
+    <!-- ZAFIRI Navbar -->
+    <header class="zafiri-header">
+      <div class="zafiri-header-brand">
+        <a href="/" class="zafiri-logo-link">
+          <div class="zafiri-header-logo">
+            <img src="{% static 'img/zafiri_logo.svg' %}" alt="ZAFIRI Logo">
+          </div>
+          <div class="zafiri-header-title">
+            <span class="zafiri-brand-name">ZAFIRI</span>
+            <span class="zafiri-brand-subtitle">Marine Atlas</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="zafiri-header-nav">
+        <a href="/" class="zafiri-nav-link">
+          <i class="fa fa-home"></i>
+          <span>{% trans "Home" %}</span>
+        </a>
+        <a href="/catalogue/#/search/?f=dataset" class="zafiri-nav-link">
+          <i class="fa fa-database"></i>
+          <span>{% trans "Data" %}</span>
+        </a>
+        <a href="/catalogue/#/search/?f=map" class="zafiri-nav-link">
+          <i class="fa fa-map"></i>
+          <span>{% trans "Maps" %}</span>
+        </a>
+        <a href="/catalogue/#/search/?f=document" class="zafiri-nav-link">
+          <i class="fa fa-file-alt"></i>
+          <span>{% trans "Docs" %}</span>
+        </a>
+        <a href="/about/" class="zafiri-nav-link">
+          <i class="fa fa-info-circle"></i>
+          <span>{% trans "About" %}</span>
+        </a>
+      </nav>
+
+      <div class="zafiri-header-search">
+        <div class="zafiri-search-container">
+          <i class="fa fa-search zafiri-search-icon"></i>
+          <input type="text" class="zafiri-search-input" id="zafiriSearchInput" placeholder="{% trans 'Search locations, species...' %}">
+        </div>
+      </div>
+
+      <div class="zafiri-header-actions">
+        {% if user.is_authenticated %}
+        <div class="zafiri-user-menu">
+          <button class="zafiri-user-btn" id="zafiriUserBtn">
+            <i class="fa fa-user-circle"></i>
+            <span>{{ user.username }}</span>
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <div class="zafiri-user-dropdown" id="zafiriUserDropdown">
+            <a href="{{ user.get_absolute_url }}">
+              <i class="fa fa-user"></i> {% trans "Profile" %}
+            </a>
+            <a href="/catalogue/#/search/?owner={{ user.username }}">
+              <i class="fa fa-folder"></i> {% trans "My Resources" %}
+            </a>
+            {% if user.is_superuser or user.is_staff %}
+            <div class="zafiri-dropdown-divider"></div>
+            <a href="{% url "admin:index" %}">
+              <i class="fa fa-cog"></i> {% trans "Admin" %}
+            </a>
+            {% endif %}
+            <div class="zafiri-dropdown-divider"></div>
+            <a href="{% url "account_logout" %}">
+              <i class="fa fa-sign-out-alt"></i> {% trans "Logout" %}
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <a href="{% url "account_signup" %}" class="zafiri-btn-register">{% trans "Register" %}</a>
+        <a href="{% url "account_login" %}" class="zafiri-btn-login">{% trans "Login" %}</a>
+        {% endif %}
+        <div class="zafiri-lang-toggle" id="zafiriLangToggle">
+          <span class="zafiri-lang-option active" data-lang="en">EN</span>
+          <span class="zafiri-lang-separator">/</span>
+          <span class="zafiri-lang-option" data-lang="sw">SW</span>
+        </div>
+      </div>
+    </header>
+
+    <style>
+      /* ZAFIRI Navbar Styles */
+      .zafiri-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: #0d3d4d;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 10000;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .zafiri-header-brand {
+        display: flex;
+        align-items: center;
+      }
+
+      .zafiri-logo-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
+
+      .zafiri-logo-link:hover {
+        text-decoration: none;
+      }
+
+      .zafiri-header-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .zafiri-header-logo img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+      }
+
+      .zafiri-header-title {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .zafiri-brand-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 1px;
+      }
+
+      .zafiri-brand-subtitle {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      .zafiri-header-nav {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: 30px;
+      }
+
+      .zafiri-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .zafiri-nav-link:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.1);
+        text-decoration: none;
+      }
+
+      .zafiri-nav-link.active {
+        color: #ffffff;
+        background: rgba(23, 162, 184, 0.3);
+      }
+
+      .zafiri-nav-link i {
+        font-size: 16px;
+      }
+
+      .zafiri-header-search {
+        flex: 1;
+        max-width: 350px;
+        margin: 0 30px;
+      }
+
+      .zafiri-search-container {
+        position: relative;
+        width: 100%;
+      }
+
+      .zafiri-search-input {
+        width: 100%;
+        height: 40px;
+        padding: 0 16px 0 44px !important;
+        border: none !important;
+        border-radius: 20px !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: #ffffff !important;
+        font-size: 14px !important;
+        transition: all 0.2s ease !important;
+      }
+
+      .zafiri-search-input::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
+      }
+
+      .zafiri-search-input:focus {
+        outline: none !important;
+        background: rgba(255, 255, 255, 0.25) !important;
+        box-shadow: 0 0 0 2px #17a2b8 !important;
+      }
+
+      .zafiri-search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
+      }
+
+      .zafiri-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .zafiri-btn-register {
+        padding: 8px 20px;
+        background: transparent;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .zafiri-btn-register:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #ffffff;
+        color: #ffffff !important;
+        text-decoration: none;
+      }
+
+      .zafiri-btn-login {
+        padding: 8px 20px;
+        background: #17a2b8;
+        color: #ffffff !important;
+        border: none;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .zafiri-btn-login:hover {
+        background: #ffffff;
+        color: #0d3d4d !important;
+        text-decoration: none;
+      }
+
+      .zafiri-lang-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        margin-left: 8px;
+      }
+
+      .zafiri-lang-option {
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .zafiri-lang-option:hover,
+      .zafiri-lang-option.active {
+        color: #ffffff;
+      }
+
+      .zafiri-lang-separator {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 12px;
+      }
+
+      .zafiri-user-menu {
+        position: relative;
+      }
+
+      .zafiri-user-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 25px;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .zafiri-user-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .zafiri-user-btn i.fa-user-circle {
+        font-size: 20px;
+      }
+
+      .zafiri-user-btn i.fa-angle-down {
+        font-size: 12px;
+        margin-left: 4px;
+      }
+
+      .zafiri-user-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        background: #0d3d4d;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        min-width: 200px;
+        padding: 8px;
+        display: none;
+        z-index: 10001;
+      }
+
+      .zafiri-user-menu:hover .zafiri-user-dropdown,
+      .zafiri-user-dropdown.show {
+        display: block;
+      }
+
+      .zafiri-user-dropdown a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        color: rgba(255, 255, 255, 0.85) !important;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .zafiri-user-dropdown a:hover {
+        background: rgba(23, 162, 184, 0.3);
+        color: #ffffff !important;
+      }
+
+      .zafiri-user-dropdown a i {
+        width: 18px;
+        text-align: center;
+        color: #17a2b8;
+      }
+
+      .zafiri-dropdown-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 6px 0;
+      }
+
+      /* Responsive */
+      @media (max-width: 1200px) {
+        .zafiri-header-search {
+          max-width: 250px;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .zafiri-header-search {
+          display: none;
+        }
+
+        .zafiri-nav-link span {
+          display: none;
+        }
+
+        .zafiri-nav-link {
+          padding: 10px 12px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .zafiri-btn-register {
+          display: none;
+        }
+
+        .zafiri-brand-subtitle {
+          display: none;
+        }
+      }
+    </style>
+    <!-- End ZAFIRI Navbar -->
+
+    <div id="wrap">
+      {% block middle %}
+      <div class="container">
+        {% include "_status_message.html" %}
+        {% include "_announcements.html" %}
+        {% include "_messages.html" %}
+        {% block body_outer %}
+        <div class="row">
+          <div class="col-md-8">
+          {% block body %}{% endblock %}
+          </div>
+          <div class="col-md-4">
+          {% block sidebar %}{% endblock %}
+          </div>
+        </div>
+        {% endblock %}
+      </div>
+      {% endblock middle %}
+
+      {% block extra_mainbody %}
+      {% endblock extra_mainbody %}
+    </div>
+
+    {% block footer %}
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h4 style="color: #ffffff; margin-bottom: 15px;">ZAFIRI Marine Atlas</h4>
+            <p style="color: rgba(255,255,255,0.7); font-size: 14px;">
+              Zanzibar Fisheries and Marine Resources Research Institute Geoportal
+            </p>
+          </div>
+          <div class="col-md-2">
+            <ul>
+              <li>{% trans "Data" %}</li>
+              <li><a href="/catalogue/#/search/?f=dataset">{% trans "Datasets" %}</a></li>
+              <li><a href="/catalogue/#/search/?f=document">{% trans "Documents" %}</a></li>
+            </ul>
+          </div>
+          <div class="col-md-2">
+            <ul>
+              <li>{% trans "Maps" %}</li>
+              <li><a href="/catalogue/#/search/?f=map">{% trans "Explore Maps" %}</a></li>
+            </ul>
+          </div>
+          <div class="col-md-2">
+            <ul>
+              <li>{% trans "About" %}</li>
+              <li><a href="/about/">{% trans "About ZAFIRI" %}</a></li>
+              <li><a href="{% url "profile_browse" %}">{% trans "People" %}</a></li>
+            </ul>
+          </div>
+          <div class="col-md-2 text-right">
+            <p style="color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 20px;">
+              {% trans "Powered by" %} <a href="http://geonode.org">GeoNode</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    {% endblock footer %}
+
+    <!-- Scripts -->
+    {% if DEBUG_STATIC %}
+    <script src="{% static "lib/js/jquery.js" %}"></script>
+    <script src="{% static "lib/js/bootstrap.js" %}"></script>
+    {% else %}
+    <script src="{% static "lib/js/assets.min.js" %}"></script>
+    {% endif %}
+    <script src="{% static "geonode/js/utils/utils.js" %}"></script>
+    <script src="{% static "geonode/js/base/base.js" %}"></script>
+
+    <script>
+      // ZAFIRI Search functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        var searchInput = document.getElementById('zafiriSearchInput');
+        if (searchInput) {
+          searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              var query = this.value.trim();
+              if (query) {
+                window.location.href = '/catalogue/#/search/?q=' + encodeURIComponent(query);
+              }
+            }
+          });
+        }
+
+        // Language toggle
+        var langOptions = document.querySelectorAll('.zafiri-lang-option');
+        langOptions.forEach(function(option) {
+          option.addEventListener('click', function() {
+            var lang = this.dataset.lang;
+            langOptions.forEach(function(opt) { opt.classList.remove('active'); });
+            this.classList.add('active');
+            document.cookie = 'django_language=' + lang + ';path=/';
+            window.location.reload();
+          });
+        });
+
+        // User dropdown
+        var userBtn = document.getElementById('zafiriUserBtn');
+        var userDropdown = document.getElementById('zafiriUserDropdown');
+        if (userBtn && userDropdown) {
+          userBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+          });
+
+          document.addEventListener('click', function() {
+            userDropdown.classList.remove('show');
+          });
+        }
+      });
+    </script>
+
+    {% block extra_script %}{% endblock extra_script %}
+  </body>
+</html>
