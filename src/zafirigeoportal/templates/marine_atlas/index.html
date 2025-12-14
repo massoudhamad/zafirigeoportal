@@ -1,0 +1,375 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZAFIRI Marine Atlas - Zanzibar Fisheries and Marine Resources Research Institute Geoportal">
+    <title>ZAFIRI | Marine Atlas</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'img/zafiri_favicon.png' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- OpenLayers CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@8.2.0/ol.css">
+
+    <!-- Marine Atlas CSS -->
+    <link rel="stylesheet" href="{% static 'css/marine_atlas.css' %}">
+</head>
+<body class="marine-atlas">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading Marine Atlas...</p>
+    </div>
+
+    <!-- Header -->
+    <header class="atlas-header">
+        <div class="header-brand">
+            <div class="header-logo">
+                <img src="{% static 'img/zafiri_logo.svg' %}" alt="ZAFIRI Logo">
+            </div>
+            <div class="header-title">
+                <span class="brand-name">ZAFIRI</span>
+                <span class="brand-subtitle">Marine Atlas</span>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="header-nav">
+            <a href="/" class="nav-link active" data-tooltip="Home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/catalogue/#/search/?f=dataset" class="nav-link" data-tooltip="Datasets">
+                <i class="fas fa-database"></i>
+                <span>Data</span>
+            </a>
+            <a href="/catalogue/#/search/?f=map" class="nav-link" data-tooltip="Maps">
+                <i class="fas fa-map"></i>
+                <span>Maps</span>
+            </a>
+            <a href="/catalogue/#/search/?f=document" class="nav-link" data-tooltip="Documents">
+                <i class="fas fa-file-alt"></i>
+                <span>Docs</span>
+            </a>
+            <a href="/about/" class="nav-link" data-tooltip="About ZAFIRI">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </a>
+        </nav>
+
+        <div class="header-search">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search locations, species...">
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <div class="lang-toggle" id="langToggle">
+                <span class="lang-option active" data-lang="en">EN</span>
+                <span class="lang-separator">/</span>
+                <span class="lang-option" data-lang="sw">SW</span>
+            </div>
+            <a href="/account/login/" class="btn-login">Login</a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="atlas-container">
+        <!-- Map Container -->
+        <div class="map-container">
+            <div id="marine-atlas-map"></div>
+
+            <!-- Left Sidebar - Layer Controls -->
+            <aside class="sidebar-left">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-layer-group"></i> Layers</h3>
+                </div>
+
+                <!-- Fisheries Layer Group -->
+                <div class="layer-group" data-group="fisheries">
+                    <div class="layer-group-header">
+                        <div class="layer-group-title">
+                            <i class="fas fa-fish layer-group-icon"></i>
+                            <h4>Fisheries</h4>
+                        </div>
+                        <i class="fas fa-chevron-down layer-group-toggle"></i>
+                    </div>
+                    <div class="layer-items">
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon fisheries">
+                                    <i class="fas fa-anchor"></i>
+                                </div>
+                                <span class="layer-name">Artisanal Zones</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="artisanal-zones" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon fisheries">
+                                    <i class="fas fa-water"></i>
+                                </div>
+                                <span class="layer-name">Deep Sea Potential</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="deep-sea-potential" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon fisheries">
+                                    <i class="fas fa-ship"></i>
+                                </div>
+                                <span class="layer-name">Fishing Grounds</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="fishing-grounds">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ecosystems Layer Group -->
+                <div class="layer-group" data-group="ecosystems">
+                    <div class="layer-group-header">
+                        <div class="layer-group-title">
+                            <i class="fas fa-leaf layer-group-icon"></i>
+                            <h4>Ecosystems</h4>
+                        </div>
+                        <i class="fas fa-chevron-down layer-group-toggle"></i>
+                    </div>
+                    <div class="layer-items">
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon ecosystem">
+                                    <i class="fas fa-bacteria"></i>
+                                </div>
+                                <span class="layer-name">Coral Reef Health</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="coral-reefs" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon ecosystem">
+                                    <i class="fas fa-tree"></i>
+                                </div>
+                                <span class="layer-name">Mangrove Extent</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="mangroves" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon ecosystem">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <span class="layer-name">Seagrass Beds</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="seagrass">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon ecosystem">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <span class="layer-name">Marine Protected Areas</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="mpa" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oceanography Layer Group -->
+                <div class="layer-group" data-group="oceanography">
+                    <div class="layer-group-header">
+                        <div class="layer-group-title">
+                            <i class="fas fa-temperature-high layer-group-icon"></i>
+                            <h4>Oceanography</h4>
+                        </div>
+                        <i class="fas fa-chevron-down layer-group-toggle"></i>
+                    </div>
+                    <div class="layer-items">
+                        <div class="layer-item with-slider">
+                            <div class="layer-row">
+                                <div class="layer-info">
+                                    <div class="layer-icon ocean">
+                                        <i class="fas fa-sun"></i>
+                                    </div>
+                                    <span class="layer-name">Sea Surface Temp</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" data-layer="sst" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="opacity-control">
+                                <span class="opacity-label">Opacity <span id="sstOpacityValue">70</span>%</span>
+                                <input type="range" class="opacity-slider" id="sstOpacity" min="0" max="100" value="70" data-layer="sst">
+                            </div>
+                        </div>
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon ocean">
+                                    <i class="fas fa-mountain"></i>
+                                </div>
+                                <span class="layer-name">Bathymetry</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="bathymetry" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="layer-item">
+                            <div class="layer-info">
+                                <div class="layer-icon ocean">
+                                    <i class="fas fa-wind"></i>
+                                </div>
+                                <span class="layer-name">Ocean Currents</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-layer="currents">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Sidebar - Island Navigation -->
+            <aside class="sidebar-right">
+                <nav class="island-nav">
+                    <span class="island-nav-label">ISLAND NAV</span>
+                    <button class="island-btn" data-island="pemba" data-tooltip="Pemba Island">PEM</button>
+                    <button class="island-btn active" data-island="all" data-tooltip="View All">ALL</button>
+                    <button class="island-btn" data-island="unguja" data-tooltip="Unguja Island">UNG</button>
+                </nav>
+            </aside>
+
+            <!-- Map Controls -->
+            <div class="map-controls">
+                <button class="map-control-btn" id="zoomIn" data-tooltip="Zoom In">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="map-control-btn" id="zoomOut" data-tooltip="Zoom Out">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="map-control-btn" id="resetView" data-tooltip="Reset View">
+                    <i class="fas fa-home"></i>
+                </button>
+                <button class="map-control-btn" id="fullscreen" data-tooltip="Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+
+            <!-- Bottom Dashboard Panel -->
+            <div class="dashboard-panel">
+                <!-- Analytics Card -->
+                <div class="dashboard-card analytics-card">
+                    <div class="card-header">
+                        <div class="card-header-title">
+                            <i class="fas fa-chart-pie"></i>
+                            <h4>Analytics Dashboard</h4>
+                        </div>
+                        <button class="card-toggle" id="analyticsToggle">
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="card-body" id="analyticsBody">
+                        <p class="chart-title">Marine Protected Areas (Unguja)</p>
+                        <div class="chart-container">
+                            <div class="donut-chart">
+                                <svg viewBox="0 0 36 36">
+                                    <circle class="donut-bg" cx="18" cy="18" r="15.91549430918954"></circle>
+                                    <circle class="donut-segment-1" cx="18" cy="18" r="15.91549430918954"
+                                            stroke-dasharray="45 55" stroke-dashoffset="25"></circle>
+                                    <circle class="donut-segment-2" cx="18" cy="18" r="15.91549430918954"
+                                            stroke-dasharray="30 70" stroke-dashoffset="80"></circle>
+                                    <circle class="donut-segment-3" cx="18" cy="18" r="15.91549430918954"
+                                            stroke-dasharray="25 75" stroke-dashoffset="50"></circle>
+                                </svg>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color mpa"></span>
+                                    <span class="legend-text">Marine Protected Areas (Unguja)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color coral"></span>
+                                    <span class="legend-text">Coral Reef Coverage</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color mangrove"></span>
+                                    <span class="legend-text">Mangrove Forest</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Stats Card -->
+                <div class="dashboard-card live-stats-card">
+                    <div class="stats-header">
+                        <span class="stats-title">Current Avg. SST:</span>
+                        <span class="live-indicator">
+                            <span class="live-dot"></span>
+                            LIVE
+                        </span>
+                    </div>
+                    <div class="stats-value">
+                        <i class="fas fa-thermometer-half stats-icon"></i>
+                        <span class="temp-value" id="sstValue">28.5</span>
+                        <span class="temp-unit">&deg;C</span>
+                        <div class="stats-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Feature Popup Template -->
+    <div id="popup-template" style="display: none;">
+        <div class="feature-popup">
+            <div class="popup-header">
+                <h5 id="popup-title">Feature Name</h5>
+            </div>
+            <div class="popup-body" id="popup-content">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- OpenLayers JS -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@8.2.0/dist/ol.js"></script>
+
+    <!-- Marine Atlas JavaScript -->
+    <script src="{% static 'js/zanzibar_geodata.js' %}"></script>
+    <script src="{% static 'js/marine_atlas.js' %}"></script>
+</body>
+</html>

@@ -18,20 +18,30 @@
 #
 #########################################################################
 
-from django.urls import path, re_path
+from django.shortcuts import render
 from django.views.generic import TemplateView
-from geonode.urls import urlpatterns as geonode_urlpatterns
-from zafirigeoportal.views import marine_atlas_home, MarineAtlasView
 
-# Custom URL patterns - Marine Atlas homepage replaces default GeoNode home
-urlpatterns = [
-    # Marine Atlas as the main homepage
-    re_path(r'^/?$', marine_atlas_home, name='home'),
 
-    # Alternative path to access Marine Atlas
-    path('marine-atlas/', MarineAtlasView.as_view(), name='marine_atlas'),
+class MarineAtlasView(TemplateView):
+    """
+    ZAFIRI Marine Atlas Homepage View
+    Serves the custom Marine Atlas geoportal interface
+    """
+    template_name = 'marine_atlas/index.html'
 
-    # About page
-    path('about/', TemplateView.as_view(template_name='marine_atlas/about.html'), name='about'),
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'ZAFIRI Marine Atlas'
+        context['site_name'] = 'Zanzibar Fisheries and Marine Resources Research Institute'
+        return context
 
-] + geonode_urlpatterns
+
+def marine_atlas_home(request):
+    """
+    Function-based view for Marine Atlas homepage
+    """
+    context = {
+        'page_title': 'ZAFIRI Marine Atlas',
+        'site_name': 'Zanzibar Fisheries and Marine Resources Research Institute',
+    }
+    return render(request, 'marine_atlas/index.html', context)
