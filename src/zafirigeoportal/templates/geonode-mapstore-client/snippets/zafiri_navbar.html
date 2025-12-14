@@ -1,6 +1,5 @@
 {% load static %}
 {% load i18n %}
-{% load base_tags %}
 
 <!-- ZAFIRI Marine Atlas Navbar -->
 <header class="zafiri-header">
@@ -48,21 +47,21 @@
                 <i class="fa fa-angle-down"></i>
             </button>
             <div class="zafiri-nav-dropdown-menu">
-                <a href="{% url 'profile_browse' %}">
+                <a href="/people/">
                     <i class="fa fa-user"></i> {% trans "People" %}
                 </a>
-                <a href="{% url 'group_list' %}">
+                <a href="/groups/">
                     <i class="fa fa-users"></i> {% trans "Groups" %}
                 </a>
                 {% if user.is_superuser %}
                 <div class="zafiri-dropdown-divider"></div>
-                <a href="{% url 'geonode.invitations:geonode-send-invite' %}">
+                <a href="/invitations/geonode-send-invite/">
                     <i class="fa fa-envelope"></i> {% trans "Invite Users" %}
                 </a>
                 <a href="/admin/people/profile/add/">
                     <i class="fa fa-user-plus"></i> {% trans "Add User" %}
                 </a>
-                <a href="{% url 'group_create' %}">
+                <a href="/groups/create/">
                     <i class="fa fa-plus-circle"></i> {% trans "Create Group" %}
                 </a>
                 {% endif %}
@@ -100,10 +99,10 @@
                     <i class="fa fa-chart-line"></i> {% trans "Monitoring" %}
                 </a>
                 <div class="zafiri-dropdown-divider"></div>
-                <a href="{% url 'services' %}">
+                <a href="/services/">
                     <i class="fa fa-plug"></i> {% trans "Remote Services" %}
                 </a>
-                <a href="{% url 'register_service' %}">
+                <a href="/services/register/">
                     <i class="fa fa-plus"></i> {% trans "Add Service" %}
                 </a>
             </div>
@@ -118,27 +117,27 @@
                 <i class="fa fa-angle-down"></i>
             </button>
             <div class="zafiri-user-dropdown" id="zafiriUserDropdown">
-                <a href="{% url 'profile_detail' user.username %}">
+                <a href="/people/profile/{{ user.username }}/">
                     <i class="fa fa-user"></i> {% trans "Profile" %}
                 </a>
                 <a href="/catalogue/#/search/?owner={{ user.username }}">
                     <i class="fa fa-folder"></i> {% trans "My Resources" %}
                 </a>
-                <a href="{% url 'recent-activity' %}">
+                <a href="/actstream/actor/{{ user.username }}/">
                     <i class="fa fa-history"></i> {% trans "Recent Activity" %}
                 </a>
-                <a href="{% url 'messages_inbox' %}">
+                <a href="/messages/inbox/">
                     <i class="fa fa-inbox"></i> {% trans "Inbox" %}
                 </a>
                 <div class="zafiri-dropdown-divider"></div>
-                <a href="{% url 'account_logout' %}">
+                <a href="/account/logout/">
                     <i class="fa fa-sign-out-alt"></i> {% trans "Logout" %}
                 </a>
             </div>
         </div>
         {% else %}
-        <a href="{% url 'account_signup' %}" class="zafiri-btn-register">{% trans "Register" %}</a>
-        <a href="{% url 'account_login' %}" class="zafiri-btn-login">{% trans "Login" %}</a>
+        <a href="/account/signup/" class="zafiri-btn-register">{% trans "Register" %}</a>
+        <a href="/account/login/" class="zafiri-btn-login">{% trans "Login" %}</a>
         {% endif %}
         <div class="zafiri-lang-toggle" id="zafiriLangToggle">
             <span class="zafiri-lang-option active" data-lang="en">EN</span>
