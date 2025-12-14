@@ -1,363 +1,658 @@
 {% extends "geonode-mapstore-client/snippets/custom_theme.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
+<!-- ZAFIRI Marine Atlas Navbar -->
+<header class="zafiri-header" id="zafiriHeader">
+    <div class="zafiri-header-brand">
+        <a href="/" class="zafiri-logo-link">
+            <div class="zafiri-header-logo">
+                <img src="{% static 'img/zafiri_logo.svg' %}" alt="ZAFIRI Logo">
+            </div>
+            <div class="zafiri-header-title">
+                <span class="zafiri-brand-name">ZAFIRI</span>
+                <span class="zafiri-brand-subtitle">Marine Atlas</span>
+            </div>
+        </a>
+    </div>
+
+    <nav class="zafiri-header-nav">
+        <a href="/" class="zafiri-nav-link">
+            <i class="fa fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/catalogue/#/search/?f=dataset" class="zafiri-nav-link">
+            <i class="fa fa-database"></i>
+            <span>Data</span>
+        </a>
+        <a href="/catalogue/#/search/?f=map" class="zafiri-nav-link">
+            <i class="fa fa-map"></i>
+            <span>Maps</span>
+        </a>
+        <a href="/catalogue/#/search/?f=document" class="zafiri-nav-link">
+            <i class="fa fa-file-alt"></i>
+            <span>Docs</span>
+        </a>
+        <a href="/about/" class="zafiri-nav-link">
+            <i class="fa fa-info-circle"></i>
+            <span>About</span>
+        </a>
+
+        <div class="zafiri-nav-dropdown" id="zafiriUsersDropdown" style="display: none;">
+            <button class="zafiri-nav-link zafiri-dropdown-toggle">
+                <i class="fa fa-users"></i>
+                <span>Users</span>
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <div class="zafiri-nav-dropdown-menu">
+                <a href="/people/"><i class="fa fa-user"></i> People</a>
+                <a href="/groups/"><i class="fa fa-users"></i> Groups</a>
+                <div class="zafiri-dropdown-divider zafiri-admin-only" style="display: none;"></div>
+                <a href="/invitations/geonode-send-invite/" class="zafiri-admin-only" style="display: none;"><i class="fa fa-envelope"></i> Invite Users</a>
+                <a href="/admin/people/profile/add/" class="zafiri-admin-only" style="display: none;"><i class="fa fa-user-plus"></i> Add User</a>
+                <a href="/groups/create/" class="zafiri-admin-only" style="display: none;"><i class="fa fa-plus-circle"></i> Create Group</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="zafiri-header-search">
+        <div class="zafiri-search-container">
+            <i class="fa fa-search zafiri-search-icon"></i>
+            <input type="text" class="zafiri-search-input" id="zafiriSearchInput" placeholder="Search locations, species...">
+        </div>
+    </div>
+
+    <div class="zafiri-header-actions">
+        <div class="zafiri-admin-menu" id="zafiriAdminMenu" style="display: none;">
+            <button class="zafiri-admin-btn" id="zafiriAdminBtn">
+                <i class="fa fa-cogs"></i>
+                <span>Admin</span>
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <div class="zafiri-admin-dropdown" id="zafiriAdminDropdown">
+                <a href="/admin/"><i class="fa fa-tachometer-alt"></i> Admin Panel</a>
+                <a href="/geoserver/"><i class="fa fa-server"></i> GeoServer</a>
+                <a href="/monitoring/"><i class="fa fa-chart-line"></i> Monitoring</a>
+                <div class="zafiri-dropdown-divider"></div>
+                <a href="/services/"><i class="fa fa-plug"></i> Remote Services</a>
+                <a href="/services/register/"><i class="fa fa-plus"></i> Add Service</a>
+            </div>
+        </div>
+
+        <div class="zafiri-user-menu" id="zafiriUserMenu" style="display: none;">
+            <button class="zafiri-user-btn" id="zafiriUserBtn">
+                <i class="fa fa-user-circle"></i>
+                <span id="zafiriUsername">User</span>
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <div class="zafiri-user-dropdown" id="zafiriUserDropdown">
+                <a href="/people/profile/" id="zafiriProfileLink"><i class="fa fa-user"></i> Profile</a>
+                <a href="/catalogue/#/search/?owner=" id="zafiriMyResourcesLink"><i class="fa fa-folder"></i> My Resources</a>
+                <a href="/actstream/actor/" id="zafiriActivityLink"><i class="fa fa-history"></i> Recent Activity</a>
+                <a href="/messages/inbox/"><i class="fa fa-inbox"></i> Inbox</a>
+                <div class="zafiri-dropdown-divider"></div>
+                <a href="/account/logout/"><i class="fa fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+
+        <div id="zafiriAuthButtons">
+            <a href="/account/signup/" class="zafiri-btn-register">Register</a>
+            <a href="/account/login/" class="zafiri-btn-login">Login</a>
+        </div>
+
+        <div class="zafiri-lang-toggle" id="zafiriLangToggle">
+            <span class="zafiri-lang-option active" data-lang="en">EN</span>
+            <span class="zafiri-lang-separator">/</span>
+            <span class="zafiri-lang-option" data-lang="sw">SW</span>
+        </div>
+    </div>
+</header>
+
 <link href="{% static 'css/zafiri_geonode_theme.css' %}" rel="stylesheet" />
 
-{% if not custom_theme.extra_css %}
 <style>
-    :root {
-        /* Primary Colors - Ocean/Marine Theme */
-        --gn-primary: #1a5f7a;
-        --gn-primary-contrast: #ffffff;
-        --gn-info: #17a2b8;
-        --gn-info-contrast: #ffffff;
-        --gn-success: #27ae60;
-        --gn-success-contrast: #ffffff;
-        --gn-warning: #f39c12;
-        --gn-warning-contrast: #ffffff;
-        --gn-danger: #e74c3c;
-        --gn-danger-contrast: #ffffff;
+/* ============================================
+   Hide GeoNode's Default Navbar
+   ============================================ */
+.gn-brand-navbar,
+nav.gn-menu,
+.gn-main-header,
+#gn-topbar,
+.gn-main-header-wrapper,
+header.gn-main-header,
+.gn-menu-content-left,
+.gn-menu-content-right {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
 
-        /* Main Interface */
-        --gn-main-color: #2c3e50;
-        --gn-main-bg: #ffffff;
-        --gn-main-border-color: #dce4ec;
-        --gn-main-variant-color: #2c3e50;
-        --gn-main-variant-bg: #f8f9fa;
-        --gn-main-hover-color: #0d3d4d;
-        --gn-main-hover-bg: #e8f4f8;
+/* Body adjustment */
+body {
+    padding-top: 64px !important;
+    margin-top: 0 !important;
+}
 
-        /* Placeholders & Disabled */
-        --gn-placeholder-color: #95a5a6;
-        --gn-placeholder-bg: #ecf0f1;
-        --gn-disabled-color: #bdc3c7;
-        --gn-disabled-bg: #ecf0f1;
+/* Main app container */
+#gn-app {
+    position: relative !important;
+    min-height: calc(100vh - 64px) !important;
+}
 
-        /* Links */
-        --gn-link-color: #1a5f7a;
-        --gn-link-hover-color: #17a2b8;
+#gn-app > div {
+    min-height: calc(100vh - 64px) !important;
+}
 
-        /* Images */
-        --gn-image-color: #2c3e50;
-        --gn-image-bg: #f5f7f9;
+/* MapStore layouts */
+.gn-viewer-layout,
+.gn-search-route,
+.gn-details-route {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    height: 100% !important;
+}
 
-        /* Focus */
-        --gn-focus-color: rgba(26, 95, 122, 0.4);
+/* ============================================
+   ZAFIRI Navbar Styles
+   ============================================ */
+.zafiri-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 64px !important;
+    background: #0d3d4d !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 20px !important;
+    z-index: 99999 !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
 
-        /* Footer - Marine Deep */
-        --gn-footer-color: #ffffff;
-        --gn-footer-bg: #0d3d4d;
-        --gn-footer-link-color: #ffffff;
-        --gn-footer-link-hover-color: #17a2b8;
+.zafiri-header * {
+    box-sizing: border-box !important;
+}
 
-        /* Badge */
-        --gn-badge-color: #ffffff;
-        --gn-badge-bg: #1a5f7a;
+.zafiri-header-brand {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+}
 
-        /* Loader */
-        --gn-loader-color: #1a5f7a;
-        --gn-loader-fade-color: rgba(26, 95, 122, 0.2);
-        --gn-loader-primary-contrast-color: #ffffff;
-        --gn-loader-primary-contrast-fade-color: rgba(255, 255, 255, 0.2);
-        --gn-loader-primary-color: #1a5f7a;
-        --gn-loader-primary-fade-color: rgba(26, 95, 122, 0.2);
+.zafiri-logo-link {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    text-decoration: none !important;
+}
 
-        /* Jumbotron/Hero - Ocean Deep */
-        --gn-jumbotron-color: #ffffff;
-        --gn-jumbotron-bg: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%);
+.zafiri-header-logo {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
 
-        /* Timeline */
-        --gn-timeline-selected-bg: rgba(26, 95, 122, 0.1);
-        --gn-timeline-histogram-bg: rgba(26, 95, 122, 0.5);
-        --gn-timeline-histogram-color: #0d3d4d;
-        --gn-timeline-range-bg: rgba(0, 0, 0, 0.2);
-        --gn-timeline-playback-range-bg: rgba(39, 174, 96, 0.2);
+.zafiri-header-logo img {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: contain !important;
+}
 
-        /* Primary Button */
-        --gn-button-primary-color: #ffffff;
-        --gn-button-primary-bg: #1a5f7a;
-        --gn-button-primary-border-color: #1a5f7a;
-        --gn-button-primary-focus-color: #ffffff;
-        --gn-button-primary-focus-bg: #0d3d4d;
-        --gn-button-primary-focus-border-color: #0d3d4d;
-        --gn-button-primary-hover-color: #ffffff;
-        --gn-button-primary-hover-bg: #17a2b8;
-        --gn-button-primary-hover-border-color: #17a2b8;
-        --gn-button-primary-active-color: #ffffff;
-        --gn-button-primary-active-bg: #0d3d4d;
-        --gn-button-primary-active-border-color: #0d3d4d;
-        --gn-button-primary-badge-color: #1a5f7a;
-        --gn-button-primary-badge-bg: #ffffff;
+.zafiri-header-title {
+    display: flex !important;
+    flex-direction: column !important;
+}
 
-        /* Info Button */
-        --gn-button-info-color: #ffffff;
-        --gn-button-info-bg: #17a2b8;
-        --gn-button-info-border-color: #17a2b8;
-        --gn-button-info-hover-color: #ffffff;
-        --gn-button-info-hover-bg: #138496;
-        --gn-button-info-hover-border-color: #138496;
+.zafiri-brand-name {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    letter-spacing: 1px !important;
+}
 
-        /* Success Button */
-        --gn-button-success-color: #ffffff;
-        --gn-button-success-bg: #27ae60;
-        --gn-button-success-border-color: #27ae60;
-        --gn-button-success-hover-color: #ffffff;
-        --gn-button-success-hover-bg: #1e8449;
-        --gn-button-success-hover-border-color: #1e8449;
+.zafiri-brand-subtitle {
+    font-size: 11px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+}
 
-        /* Default Button */
-        --gn-button-color: #2c3e50;
-        --gn-button-bg: #ffffff;
-        --gn-button-border-color: #dce4ec;
-        --gn-button-hover-color: #0d3d4d;
-        --gn-button-hover-bg: #e8f4f8;
-        --gn-button-hover-border-color: #1a5f7a;
+.zafiri-header-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-left: 30px !important;
+}
 
-        /* Tray Button */
-        --gn-button-tray-color: #2c3e50;
-        --gn-button-tray-bg: #ffffff;
-        --gn-button-tray-border-color: #1a5f7a;
-        --gn-button-tray-hover-color: #0d3d4d;
-        --gn-button-tray-hover-bg: #e8f4f8;
-        --gn-button-tray-hover-border-color: #17a2b8;
+.zafiri-nav-link {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 16px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+
+.zafiri-nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    text-decoration: none !important;
+}
+
+.zafiri-nav-link i {
+    font-size: 16px !important;
+}
+
+.zafiri-header-search {
+    flex: 1 !important;
+    max-width: 350px !important;
+    margin: 0 30px !important;
+}
+
+.zafiri-search-container {
+    position: relative !important;
+    width: 100% !important;
+}
+
+.zafiri-search-input {
+    width: 100% !important;
+    height: 40px !important;
+    padding: 0 16px 0 44px !important;
+    border: none !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+}
+
+.zafiri-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.zafiri-search-input:focus {
+    outline: none !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+.zafiri-search-icon {
+    position: absolute !important;
+    left: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.zafiri-header-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.zafiri-btn-register {
+    padding: 8px 20px !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+}
+
+.zafiri-btn-register:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.zafiri-btn-login {
+    padding: 8px 20px !important;
+    background: #17a2b8 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+}
+
+.zafiri-btn-login:hover {
+    background: #ffffff !important;
+    color: #0d3d4d !important;
+    text-decoration: none !important;
+}
+
+.zafiri-lang-toggle {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 12px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+}
+
+.zafiri-lang-option {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    cursor: pointer !important;
+}
+
+.zafiri-lang-option:hover,
+.zafiri-lang-option.active {
+    color: #ffffff !important;
+}
+
+.zafiri-lang-separator {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Dropdown menus */
+.zafiri-nav-dropdown,
+.zafiri-admin-menu,
+.zafiri-user-menu {
+    position: relative !important;
+}
+
+.zafiri-nav-dropdown-menu,
+.zafiri-admin-dropdown,
+.zafiri-user-dropdown {
+    position: absolute !important;
+    top: 100% !important;
+    margin-top: 8px !important;
+    background: #0d3d4d !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    min-width: 200px !important;
+    padding: 8px !important;
+    display: none !important;
+    z-index: 100000 !important;
+}
+
+.zafiri-nav-dropdown-menu {
+    left: 0 !important;
+}
+
+.zafiri-admin-dropdown,
+.zafiri-user-dropdown {
+    right: 0 !important;
+}
+
+.zafiri-nav-dropdown:hover .zafiri-nav-dropdown-menu,
+.zafiri-admin-menu:hover .zafiri-admin-dropdown,
+.zafiri-user-menu:hover .zafiri-user-dropdown,
+.zafiri-nav-dropdown-menu.show,
+.zafiri-admin-dropdown.show,
+.zafiri-user-dropdown.show {
+    display: block !important;
+}
+
+.zafiri-nav-dropdown-menu a,
+.zafiri-admin-dropdown a,
+.zafiri-user-dropdown a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 10px 14px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-decoration: none !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+}
+
+.zafiri-nav-dropdown-menu a:hover,
+.zafiri-admin-dropdown a:hover,
+.zafiri-user-dropdown a:hover {
+    background: rgba(23, 162, 184, 0.3) !important;
+    color: #ffffff !important;
+}
+
+.zafiri-nav-dropdown-menu a i,
+.zafiri-admin-dropdown a i,
+.zafiri-user-dropdown a i {
+    width: 18px !important;
+    text-align: center !important;
+    color: #17a2b8 !important;
+}
+
+.zafiri-dropdown-divider {
+    height: 1px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    margin: 6px 0 !important;
+}
+
+.zafiri-admin-btn,
+.zafiri-user-btn {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px 14px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: none !important;
+    border-radius: 25px !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+}
+
+.zafiri-admin-btn {
+    background: rgba(23, 162, 184, 0.3) !important;
+}
+
+.zafiri-admin-btn:hover,
+.zafiri-user-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.zafiri-dropdown-toggle {
+    background: none !important;
+    border: none !important;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .zafiri-header-search {
+        max-width: 250px !important;
     }
+}
 
-    /* ============================================
-       ZAFIRI Global Enhancements
-       ============================================ */
-
-    /* Font Import */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+@media (max-width: 992px) {
+    .zafiri-header-search {
+        display: none !important;
     }
-
-    /* Header/Navbar Enhancement */
-    .gn-brand-navbar {
-        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15) !important;
-        height: 64px !important;
+    .zafiri-nav-link span {
+        display: none !important;
     }
+}
 
-    /* Card Styling */
-    .gn-card,
-    .card {
-        border-radius: 12px !important;
-        border: 1px solid #dce4ec !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
-        transition: all 0.3s ease !important;
+@media (max-width: 768px) {
+    .zafiri-btn-register {
+        display: none !important;
     }
+    .zafiri-brand-subtitle {
+        display: none !important;
+    }
+}
 
-    .gn-card:hover,
-    .card:hover {
-        box-shadow: 0 8px 25px rgba(26, 95, 122, 0.15) !important;
-        transform: translateY(-2px) !important;
-    }
+/* ============================================
+   ZAFIRI Theme Variables
+   ============================================ */
+:root {
+    --gn-primary: #1a5f7a;
+    --gn-primary-contrast: #ffffff;
+    --gn-info: #17a2b8;
+    --gn-info-contrast: #ffffff;
+    --gn-success: #27ae60;
+    --gn-success-contrast: #ffffff;
+    --gn-warning: #f39c12;
+    --gn-warning-contrast: #ffffff;
+    --gn-danger: #e74c3c;
+    --gn-danger-contrast: #ffffff;
+    --gn-main-color: #2c3e50;
+    --gn-main-bg: #ffffff;
+    --gn-main-border-color: #dce4ec;
+    --gn-link-color: #1a5f7a;
+    --gn-link-hover-color: #17a2b8;
+    --gn-footer-color: #ffffff;
+    --gn-footer-bg: #0d3d4d;
+    --gn-button-primary-color: #ffffff;
+    --gn-button-primary-bg: #1a5f7a;
+    --gn-button-primary-hover-bg: #17a2b8;
+}
 
-    /* Resource Cards */
-    .gn-resource-card {
-        border-radius: 12px !important;
-        overflow: hidden;
-    }
+/* Card styling */
+.gn-card, .card {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+}
 
-    .gn-resource-card .gn-resource-card-image-wrapper {
-        background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4d 100%);
-    }
+.gn-card:hover, .card:hover {
+    box-shadow: 0 8px 25px rgba(26, 95, 122, 0.15) !important;
+    transform: translateY(-2px) !important;
+}
 
-    /* Buttons */
-    .btn-primary,
-    .gn-button-primary {
-        background: linear-gradient(135deg, #1a5f7a 0%, #17a2b8 100%) !important;
-        border: none !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        transition: all 0.3s ease !important;
-    }
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #1a5f7a 0%, #17a2b8 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+}
 
-    .btn-primary:hover,
-    .gn-button-primary:hover {
-        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(26, 95, 122, 0.3) !important;
-    }
-
-    /* Form Inputs */
-    .form-control,
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    textarea,
-    select {
-        border-radius: 8px !important;
-        border: 1px solid #dce4ec !important;
-        transition: all 0.2s ease !important;
-    }
-
-    .form-control:focus,
-    input:focus,
-    textarea:focus,
-    select:focus {
-        border-color: #1a5f7a !important;
-        box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.15) !important;
-    }
-
-    /* Sidebar */
-    .gn-details-panel,
-    .gn-filter-form {
-        background: #f8f9fa !important;
-        border-radius: 12px !important;
-    }
-
-    /* Footer */
-    .gn-footer,
-    footer {
-        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
-        border-top: 3px solid #17a2b8 !important;
-    }
-
-    /* Map Viewer Enhancements */
-    .gn-viewer-layout {
-        background: #f5f7f9;
-    }
-
-    .gn-toc-container {
-        background: rgba(255, 255, 255, 0.98) !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
-    }
-
-    /* Hero Section Override */
-    .gn-hero-section {
-        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 50%, #17a2b8 100%) !important;
-        min-height: 300px;
-    }
-
-    .gn-hero-section h1 {
-        font-weight: 700 !important;
-        letter-spacing: 0.5px;
-    }
-
-    /* Breadcrumb */
-    .gn-breadcrumb {
-        background: transparent !important;
-        padding: 15px 0 !important;
-    }
-
-    .gn-breadcrumb a {
-        color: #1a5f7a !important;
-    }
-
-    /* Tabs */
-    .nav-tabs .nav-link.active {
-        color: #1a5f7a !important;
-        border-bottom: 3px solid #1a5f7a !important;
-        font-weight: 600 !important;
-    }
-
-    .nav-tabs .nav-link:hover {
-        color: #17a2b8 !important;
-    }
-
-    /* Pagination */
-    .pagination .page-link {
-        color: #1a5f7a !important;
-        border-radius: 6px !important;
-        margin: 0 2px !important;
-    }
-
-    .pagination .page-item.active .page-link {
-        background: #1a5f7a !important;
-        border-color: #1a5f7a !important;
-        color: #ffffff !important;
-    }
-
-    /* Tags/Badges */
-    .badge,
-    .tag {
-        border-radius: 20px !important;
-        padding: 4px 12px !important;
-        font-weight: 500 !important;
-    }
-
-    .badge-primary {
-        background: #1a5f7a !important;
-    }
-
-    .badge-info {
-        background: #17a2b8 !important;
-    }
-
-    /* Modal */
-    .modal-content {
-        border-radius: 16px !important;
-        border: none !important;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
-    }
-
-    .modal-header {
-        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
-        color: #ffffff !important;
-        border-radius: 16px 16px 0 0 !important;
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #1a5f7a;
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #0d3d4d;
-    }
-
-    /* Selection */
-    ::selection {
-        background: rgba(26, 95, 122, 0.3);
-        color: #0d3d4d;
-    }
-
-    /* Loading Spinner */
-    .gn-spinner {
-        border-top-color: #1a5f7a !important;
-    }
-
-    /* Alert Enhancements */
-    .alert {
-        border-radius: 10px !important;
-        border-left-width: 4px !important;
-    }
-
-    .alert-info {
-        border-left-color: #17a2b8 !important;
-        background: rgba(23, 162, 184, 0.1) !important;
-    }
-
-    .alert-success {
-        border-left-color: #27ae60 !important;
-        background: rgba(39, 174, 96, 0.1) !important;
-    }
-
-    .alert-warning {
-        border-left-color: #f39c12 !important;
-        background: rgba(243, 156, 18, 0.1) !important;
-    }
-
-    .alert-danger {
-        border-left-color: #e74c3c !important;
-        background: rgba(231, 76, 60, 0.1) !important;
-    }
+/* Footer */
+.gn-footer, footer {
+    background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+}
 </style>
-{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch user info from GeoNode API
+    fetch('/api/v2/users/info/', {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(function(response) {
+        if (response.ok) return response.json();
+        throw new Error('Not authenticated');
+    })
+    .then(function(data) {
+        var username = data.user && data.user.username ? data.user.username : (data.username || 'User');
+        var isAdmin = data.user ? (data.user.is_superuser || data.user.is_staff) : (data.is_superuser || data.is_staff);
+
+        // Hide login/register, show user menu
+        var authButtons = document.getElementById('zafiriAuthButtons');
+        if (authButtons) authButtons.style.display = 'none';
+
+        var userMenu = document.getElementById('zafiriUserMenu');
+        if (userMenu) userMenu.style.display = 'flex';
+
+        var usernameSpan = document.getElementById('zafiriUsername');
+        if (usernameSpan) usernameSpan.textContent = username;
+
+        // Update links
+        var profileLink = document.getElementById('zafiriProfileLink');
+        if (profileLink) profileLink.href = '/people/profile/' + username + '/';
+
+        var myResourcesLink = document.getElementById('zafiriMyResourcesLink');
+        if (myResourcesLink) myResourcesLink.href = '/catalogue/#/search/?owner=' + username;
+
+        var activityLink = document.getElementById('zafiriActivityLink');
+        if (activityLink) activityLink.href = '/actstream/actor/' + username + '/';
+
+        // Show Users dropdown
+        var usersDropdown = document.getElementById('zafiriUsersDropdown');
+        if (usersDropdown) usersDropdown.style.display = 'flex';
+
+        // Show admin menu
+        if (isAdmin) {
+            var adminMenu = document.getElementById('zafiriAdminMenu');
+            if (adminMenu) adminMenu.style.display = 'flex';
+
+            var adminOnlyItems = document.querySelectorAll('.zafiri-admin-only');
+            adminOnlyItems.forEach(function(item) {
+                item.style.display = 'flex';
+            });
+        }
+    })
+    .catch(function(error) {
+        console.log('User not authenticated');
+    });
+
+    // Search functionality
+    var searchInput = document.getElementById('zafiriSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                var query = this.value.trim();
+                if (query) {
+                    window.location.href = '/catalogue/#/search/?q=' + encodeURIComponent(query);
+                }
+            }
+        });
+    }
+
+    // Language toggle
+    var langOptions = document.querySelectorAll('.zafiri-lang-option');
+    langOptions.forEach(function(option) {
+        option.addEventListener('click', function() {
+            var lang = this.dataset.lang;
+            langOptions.forEach(function(opt) { opt.classList.remove('active'); });
+            this.classList.add('active');
+            document.cookie = 'django_language=' + lang + ';path=/';
+            window.location.reload();
+        });
+    });
+
+    // Dropdown toggles
+    var userBtn = document.getElementById('zafiriUserBtn');
+    var userDropdown = document.getElementById('zafiriUserDropdown');
+    if (userBtn && userDropdown) {
+        userBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+        });
+    }
+
+    var adminBtn = document.getElementById('zafiriAdminBtn');
+    var adminDropdown = document.getElementById('zafiriAdminDropdown');
+    if (adminBtn && adminDropdown) {
+        adminBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            adminDropdown.classList.toggle('show');
+        });
+    }
+
+    document.addEventListener('click', function() {
+        if (userDropdown) userDropdown.classList.remove('show');
+        if (adminDropdown) adminDropdown.classList.remove('show');
+    });
+});
+</script>
 {% endblock %}
