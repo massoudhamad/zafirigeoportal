@@ -2,10 +2,43 @@
 {% load static %}
 
 {% block content %}
+<!-- Include ZAFIRI Navbar -->
+{% include "geonode-mapstore-client/snippets/zafiri_navbar.html" %}
+
 <link href="{% static 'css/zafiri_geonode_theme.css' %}" rel="stylesheet" />
 
 {% if not custom_theme.extra_css %}
 <style>
+    /* Hide GeoNode's default navbar */
+    .gn-brand-navbar,
+    nav.gn-menu,
+    .gn-main-header,
+    #gn-topbar {
+        display: none !important;
+    }
+
+    /* Adjust body padding for custom navbar */
+    body {
+        padding-top: 64px !important;
+    }
+
+    /* Adjust main content area */
+    #gn-app,
+    .gn-main-content,
+    .gn-page-container,
+    #page-content {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Make sure the catalogue content shows below navbar */
+    .gn-viewer-layout,
+    .gn-search-route,
+    .gn-details-route {
+        top: 64px !important;
+        height: calc(100vh - 64px) !important;
+    }
+
     :root {
         /* Primary Colors - Ocean/Marine Theme */
         --gn-primary: #1a5f7a;
