@@ -2,7 +2,7 @@
 {% load i18n %}
 
 <!-- ZAFIRI Marine Atlas Navbar -->
-<header class="zafiri-header">
+<header class="zafiri-header" id="zafiriHeader">
     <div class="zafiri-header-brand">
         <a href="/" class="zafiri-logo-link">
             <div class="zafiri-header-logo">
@@ -17,128 +17,123 @@
 
     <!-- Main Navigation -->
     <nav class="zafiri-header-nav">
-        <a href="/" class="zafiri-nav-link {% if request.path == '/' %}active{% endif %}">
+        <a href="/" class="zafiri-nav-link">
             <i class="fa fa-home"></i>
-            <span>{% trans "Home" %}</span>
+            <span>Home</span>
         </a>
-        <a href="/catalogue/#/search/?f=dataset" class="zafiri-nav-link {% if 'dataset' in request.path or 'dataset' in request.GET.urlencode %}active{% endif %}">
+        <a href="/catalogue/#/search/?f=dataset" class="zafiri-nav-link">
             <i class="fa fa-database"></i>
-            <span>{% trans "Data" %}</span>
+            <span>Data</span>
         </a>
-        <a href="/catalogue/#/search/?f=map" class="zafiri-nav-link {% if 'map' in request.path %}active{% endif %}">
+        <a href="/catalogue/#/search/?f=map" class="zafiri-nav-link">
             <i class="fa fa-map"></i>
-            <span>{% trans "Maps" %}</span>
+            <span>Maps</span>
         </a>
-        <a href="/catalogue/#/search/?f=document" class="zafiri-nav-link {% if 'document' in request.path %}active{% endif %}">
+        <a href="/catalogue/#/search/?f=document" class="zafiri-nav-link">
             <i class="fa fa-file-alt"></i>
-            <span>{% trans "Docs" %}</span>
+            <span>Docs</span>
         </a>
-        <a href="/about/" class="zafiri-nav-link {% if request.path == '/about/' %}active{% endif %}">
+        <a href="/about/" class="zafiri-nav-link">
             <i class="fa fa-info-circle"></i>
-            <span>{% trans "About" %}</span>
+            <span>About</span>
         </a>
 
-        {% if user.is_authenticated %}
-        <!-- Users/People dropdown for authenticated users -->
-        <div class="zafiri-nav-dropdown">
+        <!-- Users dropdown - shown via JS when authenticated -->
+        <div class="zafiri-nav-dropdown" id="zafiriUsersDropdown" style="display: none;">
             <button class="zafiri-nav-link zafiri-dropdown-toggle">
                 <i class="fa fa-users"></i>
-                <span>{% trans "Users" %}</span>
+                <span>Users</span>
                 <i class="fa fa-angle-down"></i>
             </button>
             <div class="zafiri-nav-dropdown-menu">
                 <a href="/people/">
-                    <i class="fa fa-user"></i> {% trans "People" %}
+                    <i class="fa fa-user"></i> People
                 </a>
                 <a href="/groups/">
-                    <i class="fa fa-users"></i> {% trans "Groups" %}
+                    <i class="fa fa-users"></i> Groups
                 </a>
-                {% if user.is_superuser %}
-                <div class="zafiri-dropdown-divider"></div>
-                <a href="/invitations/geonode-send-invite/">
-                    <i class="fa fa-envelope"></i> {% trans "Invite Users" %}
+                <div class="zafiri-dropdown-divider zafiri-admin-only" style="display: none;"></div>
+                <a href="/invitations/geonode-send-invite/" class="zafiri-admin-only" style="display: none;">
+                    <i class="fa fa-envelope"></i> Invite Users
                 </a>
-                <a href="/admin/people/profile/add/">
-                    <i class="fa fa-user-plus"></i> {% trans "Add User" %}
+                <a href="/admin/people/profile/add/" class="zafiri-admin-only" style="display: none;">
+                    <i class="fa fa-user-plus"></i> Add User
                 </a>
-                <a href="/groups/create/">
-                    <i class="fa fa-plus-circle"></i> {% trans "Create Group" %}
+                <a href="/groups/create/" class="zafiri-admin-only" style="display: none;">
+                    <i class="fa fa-plus-circle"></i> Create Group
                 </a>
-                {% endif %}
             </div>
         </div>
-        {% endif %}
     </nav>
 
     <div class="zafiri-header-search">
         <div class="zafiri-search-container">
             <i class="fa fa-search zafiri-search-icon"></i>
-            <input type="text" class="zafiri-search-input" id="zafiriSearchInput" placeholder="{% trans 'Search locations, species...' %}">
+            <input type="text" class="zafiri-search-input" id="zafiriSearchInput" placeholder="Search locations, species...">
         </div>
     </div>
 
     <div class="zafiri-header-actions">
-        {% if user.is_authenticated %}
-
-        {% if user.is_superuser or user.is_staff %}
-        <!-- Admin dropdown for superusers/staff -->
-        <div class="zafiri-admin-menu">
+        <!-- Admin dropdown - shown via JS for admin users -->
+        <div class="zafiri-admin-menu" id="zafiriAdminMenu" style="display: none;">
             <button class="zafiri-admin-btn" id="zafiriAdminBtn">
                 <i class="fa fa-cogs"></i>
-                <span>{% trans "Admin" %}</span>
+                <span>Admin</span>
                 <i class="fa fa-angle-down"></i>
             </button>
             <div class="zafiri-admin-dropdown" id="zafiriAdminDropdown">
                 <a href="/admin/">
-                    <i class="fa fa-tachometer-alt"></i> {% trans "Admin Panel" %}
+                    <i class="fa fa-tachometer-alt"></i> Admin Panel
                 </a>
                 <a href="/geoserver/">
-                    <i class="fa fa-server"></i> {% trans "GeoServer" %}
+                    <i class="fa fa-server"></i> GeoServer
                 </a>
                 <a href="/monitoring/">
-                    <i class="fa fa-chart-line"></i> {% trans "Monitoring" %}
+                    <i class="fa fa-chart-line"></i> Monitoring
                 </a>
                 <div class="zafiri-dropdown-divider"></div>
                 <a href="/services/">
-                    <i class="fa fa-plug"></i> {% trans "Remote Services" %}
+                    <i class="fa fa-plug"></i> Remote Services
                 </a>
                 <a href="/services/register/">
-                    <i class="fa fa-plus"></i> {% trans "Add Service" %}
+                    <i class="fa fa-plus"></i> Add Service
                 </a>
             </div>
         </div>
-        {% endif %}
 
-        <!-- User menu -->
-        <div class="zafiri-user-menu">
+        <!-- User menu - shown via JS when authenticated -->
+        <div class="zafiri-user-menu" id="zafiriUserMenu" style="display: none;">
             <button class="zafiri-user-btn" id="zafiriUserBtn">
                 <i class="fa fa-user-circle"></i>
-                <span>{{ user.username }}</span>
+                <span id="zafiriUsername">User</span>
                 <i class="fa fa-angle-down"></i>
             </button>
             <div class="zafiri-user-dropdown" id="zafiriUserDropdown">
-                <a href="/people/profile/{{ user.username }}/">
-                    <i class="fa fa-user"></i> {% trans "Profile" %}
+                <a href="/people/profile/" id="zafiriProfileLink">
+                    <i class="fa fa-user"></i> Profile
                 </a>
-                <a href="/catalogue/#/search/?owner={{ user.username }}">
-                    <i class="fa fa-folder"></i> {% trans "My Resources" %}
+                <a href="/catalogue/#/search/?owner=" id="zafiriMyResourcesLink">
+                    <i class="fa fa-folder"></i> My Resources
                 </a>
-                <a href="/actstream/actor/{{ user.username }}/">
-                    <i class="fa fa-history"></i> {% trans "Recent Activity" %}
+                <a href="/actstream/actor/" id="zafiriActivityLink">
+                    <i class="fa fa-history"></i> Recent Activity
                 </a>
                 <a href="/messages/inbox/">
-                    <i class="fa fa-inbox"></i> {% trans "Inbox" %}
+                    <i class="fa fa-inbox"></i> Inbox
                 </a>
                 <div class="zafiri-dropdown-divider"></div>
                 <a href="/account/logout/">
-                    <i class="fa fa-sign-out-alt"></i> {% trans "Logout" %}
+                    <i class="fa fa-sign-out-alt"></i> Logout
                 </a>
             </div>
         </div>
-        {% else %}
-        <a href="/account/signup/" class="zafiri-btn-register">{% trans "Register" %}</a>
-        <a href="/account/login/" class="zafiri-btn-login">{% trans "Login" %}</a>
-        {% endif %}
+
+        <!-- Login/Register buttons - shown when NOT authenticated -->
+        <div id="zafiriAuthButtons">
+            <a href="/account/signup/" class="zafiri-btn-register">Register</a>
+            <a href="/account/login/" class="zafiri-btn-login">Login</a>
+        </div>
+
         <div class="zafiri-lang-toggle" id="zafiriLangToggle">
             <span class="zafiri-lang-option active" data-lang="en">EN</span>
             <span class="zafiri-lang-separator">/</span>
@@ -151,6 +146,15 @@
 /* ============================================
    ZAFIRI Unified Navbar Styles
    ============================================ */
+
+/* Reset any inherited styles that could cause white background */
+header.zafiri-header,
+header.zafiri-header *,
+#zafiriHeader,
+#zafiriHeader * {
+    background-color: transparent;
+}
+
 .zafiri-header {
     position: fixed !important;
     top: 0 !important;
@@ -158,15 +162,18 @@
     right: 0 !important;
     height: 64px !important;
     background: #0d3d4d !important;
+    background-color: #0d3d4d !important;
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
     padding: 0 20px !important;
-    z-index: 10000 !important;
+    z-index: 99999 !important;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15) !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
 }
 
 .zafiri-header * {
@@ -638,12 +645,73 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Fetch user info from GeoNode API
+    fetch('/api/v2/users/info/', {
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(response) {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Not authenticated');
+    })
+    .then(function(data) {
+        // User is authenticated
+        var username = data.user && data.user.username ? data.user.username : (data.username || 'User');
+        var isAdmin = data.user ? (data.user.is_superuser || data.user.is_staff) : (data.is_superuser || data.is_staff);
+
+        // Hide login/register buttons
+        var authButtons = document.getElementById('zafiriAuthButtons');
+        if (authButtons) authButtons.style.display = 'none';
+
+        // Show user menu
+        var userMenu = document.getElementById('zafiriUserMenu');
+        if (userMenu) userMenu.style.display = 'flex';
+
+        // Update username
+        var usernameSpan = document.getElementById('zafiriUsername');
+        if (usernameSpan) usernameSpan.textContent = username;
+
+        // Update profile links with username
+        var profileLink = document.getElementById('zafiriProfileLink');
+        if (profileLink) profileLink.href = '/people/profile/' + username + '/';
+
+        var myResourcesLink = document.getElementById('zafiriMyResourcesLink');
+        if (myResourcesLink) myResourcesLink.href = '/catalogue/#/search/?owner=' + username;
+
+        var activityLink = document.getElementById('zafiriActivityLink');
+        if (activityLink) activityLink.href = '/actstream/actor/' + username + '/';
+
+        // Show Users dropdown for authenticated users
+        var usersDropdown = document.getElementById('zafiriUsersDropdown');
+        if (usersDropdown) usersDropdown.style.display = 'flex';
+
+        // Show admin menu if user is admin/staff
+        if (isAdmin) {
+            var adminMenu = document.getElementById('zafiriAdminMenu');
+            if (adminMenu) adminMenu.style.display = 'flex';
+
+            // Show admin-only items in Users dropdown
+            var adminOnlyItems = document.querySelectorAll('.zafiri-admin-only');
+            adminOnlyItems.forEach(function(item) {
+                item.style.display = 'flex';
+            });
+        }
+    })
+    .catch(function(error) {
+        // User is not authenticated - show login/register buttons (default state)
+        console.log('User not authenticated');
+    });
+
     // Search functionality
-    const searchInput = document.getElementById('zafiriSearchInput');
+    var searchInput = document.getElementById('zafiriSearchInput');
     if (searchInput) {
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                const query = this.value.trim();
+                var query = this.value.trim();
                 if (query) {
                     window.location.href = '/catalogue/#/search/?q=' + encodeURIComponent(query);
                 }
@@ -652,10 +720,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Language toggle
-    const langOptions = document.querySelectorAll('.zafiri-lang-option');
+    var langOptions = document.querySelectorAll('.zafiri-lang-option');
     langOptions.forEach(function(option) {
         option.addEventListener('click', function() {
-            const lang = this.dataset.lang;
+            var lang = this.dataset.lang;
             langOptions.forEach(function(opt) { opt.classList.remove('active'); });
             this.classList.add('active');
             document.cookie = 'django_language=' + lang + ';path=/';
@@ -663,18 +731,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // User dropdown toggle for mobile
-    const userBtn = document.getElementById('zafiriUserBtn');
-    const userDropdown = document.getElementById('zafiriUserDropdown');
+    // User dropdown toggle
+    var userBtn = document.getElementById('zafiriUserBtn');
+    var userDropdown = document.getElementById('zafiriUserDropdown');
     if (userBtn && userDropdown) {
         userBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             userDropdown.classList.toggle('show');
         });
+    }
 
-        document.addEventListener('click', function() {
-            userDropdown.classList.remove('show');
+    // Admin dropdown toggle
+    var adminBtn = document.getElementById('zafiriAdminBtn');
+    var adminDropdown = document.getElementById('zafiriAdminDropdown');
+    if (adminBtn && adminDropdown) {
+        adminBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            adminDropdown.classList.toggle('show');
         });
     }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function() {
+        if (userDropdown) userDropdown.classList.remove('show');
+        if (adminDropdown) adminDropdown.classList.remove('show');
+    });
 });
 </script>
