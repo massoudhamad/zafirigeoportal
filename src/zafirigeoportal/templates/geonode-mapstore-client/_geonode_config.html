@@ -8,7 +8,6 @@
 
         // Custom map configuration for Zanzibar
         if (localConfig.map) {
-            // Set default center to Zanzibar
             localConfig.map.center = {
                 x: 39.3,
                 y: -5.9,
@@ -18,58 +17,97 @@
         }
 
         // Custom theme colors
-        if (localConfig.theme) {
-            localConfig.theme = {
-                ...localConfig.theme,
-                primaryColor: '#1a5f7a',
-                primaryContrastColor: '#ffffff',
-                infoColor: '#17a2b8',
-                successColor: '#27ae60',
-                warningColor: '#f39c12',
-                dangerColor: '#e74c3c'
-            };
+        localConfig.theme = {
+            ...(localConfig.theme || {}),
+            primaryColor: '#1a5f7a',
+            primaryContrastColor: '#ffffff',
+            infoColor: '#17a2b8',
+            successColor: '#27ae60',
+            warningColor: '#f39c12',
+            dangerColor: '#e74c3c'
+        };
+
+        // Override the navbar menu completely - ZAFIRI custom menu
+        // Remove default GeoNode menu items and replace with our custom navigation
+        localConfig.geoNodeCustomFilters = {
+            ...(localConfig.geoNodeCustomFilters || {}),
+            // Hide GeoStories and Dashboards from filters
+            disabledFilters: ['geostory', 'dashboard']
+        };
+
+        // Custom menu configuration - Replace default menu
+        localConfig.menuItems = [
+            {
+                type: 'link',
+                href: '/',
+                label: 'Home',
+                authenticated: false,
+                showAnonymous: true
+            },
+            {
+                type: 'link',
+                href: '/catalogue/#/search/?f=dataset',
+                label: 'Data',
+                authenticated: false,
+                showAnonymous: true
+            },
+            {
+                type: 'link',
+                href: '/catalogue/#/search/?f=map',
+                label: 'Maps',
+                authenticated: false,
+                showAnonymous: true
+            },
+            {
+                type: 'link',
+                href: '/catalogue/#/search/?f=document',
+                label: 'Docs',
+                authenticated: false,
+                showAnonymous: true
+            },
+            {
+                type: 'link',
+                href: '/about/',
+                label: 'About',
+                authenticated: false,
+                showAnonymous: true
+            }
+        ];
+
+        // Override filter tabs to remove GeoStories and Dashboards
+        if (localConfig.filterMenuItems) {
+            localConfig.filterMenuItems = localConfig.filterMenuItems.filter(function(item) {
+                return item.id !== 'geostory' && item.id !== 'dashboard';
+            });
         }
 
         // Add custom background layers
-        if (localConfig.backgroundLayers) {
-            localConfig.backgroundLayers = [
-                {
-                    type: 'osm',
-                    title: 'OpenStreetMap',
-                    name: 'osm',
-                    source: 'osm',
-                    visibility: false,
-                    group: 'background'
-                },
-                {
-                    type: 'tileprovider',
-                    title: 'Ocean Basemap',
-                    name: 'ocean_basemap',
-                    provider: 'Esri.OceanBasemap',
-                    visibility: true,
-                    group: 'background'
-                },
-                {
-                    type: 'tileprovider',
-                    title: 'Satellite',
-                    name: 'satellite',
-                    provider: 'Esri.WorldImagery',
-                    visibility: false,
-                    group: 'background'
-                }
-            ];
-        }
-
-        // Customize menu items to include Marine Atlas home
-        if (localConfig.menu && localConfig.menu.items) {
-            // Add Marine Atlas as first menu item
-            localConfig.menu.items.unshift({
-                type: 'link',
-                href: '/',
-                label: 'Marine Atlas',
-                icon: 'globe'
-            });
-        }
+        localConfig.backgroundLayers = [
+            {
+                type: 'tileprovider',
+                title: 'Ocean Basemap',
+                name: 'ocean_basemap',
+                provider: 'Esri.OceanBasemap',
+                visibility: true,
+                group: 'background'
+            },
+            {
+                type: 'osm',
+                title: 'OpenStreetMap',
+                name: 'osm',
+                source: 'osm',
+                visibility: false,
+                group: 'background'
+            },
+            {
+                type: 'tileprovider',
+                title: 'Satellite',
+                name: 'satellite',
+                provider: 'Esri.WorldImagery',
+                visibility: false,
+                group: 'background'
+            }
+        ];
 
         return localConfig;
     };
@@ -77,21 +115,410 @@
 {% endblock %}
 
 {% block extra_script %}
-<!-- ZAFIRI Marine Atlas Custom Scripts -->
-<script>
-    // Add Marine Atlas branding enhancement
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add custom class to body for ZAFIRI styling
-        document.body.classList.add('zafiri-portal');
+<!-- ZAFIRI Marine Atlas - Replace GeoNode Navigation with Custom Navigation -->
+<style>
+    /* Hide default GeoNode navigation */
+    .gn-main-header .gn-menu,
+    .gn-main-header nav.gn-menu-container {
+        display: none !important;
+    }
 
-        // Enhance logo area if needed
-        const logoElement = document.querySelector('.gn-logo');
-        if (logoElement && !logoElement.querySelector('.gn-logo-text')) {
-            const logoText = document.createElement('div');
-            logoText.className = 'gn-logo-text';
-            logoText.innerHTML = '<span class="gn-logo-title">ZAFIRI</span><span class="gn-logo-subtitle">Marine Atlas</span>';
-            logoElement.appendChild(logoText);
+    /* ZAFIRI Custom Navigation Bar */
+    .zafiri-navbar {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 64px;
+        padding: 0 20px;
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%);
+    }
+
+    .zafiri-navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+    }
+
+    .zafiri-navbar-logo {
+        width: 44px;
+        height: 44px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .zafiri-navbar-logo img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+
+    .zafiri-navbar-title {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .zafiri-navbar-title-main {
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: 1px;
+    }
+
+    .zafiri-navbar-title-sub {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .zafiri-navbar-menu {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .zafiri-navbar-menu a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+        font-size: 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .zafiri-navbar-menu a:hover,
+    .zafiri-navbar-menu a.active {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .zafiri-navbar-search {
+        flex: 1;
+        max-width: 400px;
+        margin: 0 30px;
+        position: relative;
+    }
+
+    .zafiri-navbar-search input {
+        width: 100%;
+        height: 40px;
+        padding: 0 16px 0 44px;
+        border: none;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        font-size: 14px;
+    }
+
+    .zafiri-navbar-search input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .zafiri-navbar-search input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .zafiri-navbar-search i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .zafiri-navbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .zafiri-btn-register {
+        padding: 8px 20px;
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .zafiri-btn-register:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #fff;
+        color: #fff;
+    }
+
+    .zafiri-btn-login {
+        padding: 8px 20px;
+        background: #17a2b8;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .zafiri-btn-login:hover {
+        background: #fff;
+        color: #0d3d4d;
+    }
+
+    .zafiri-lang-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+    }
+
+    .zafiri-lang-option {
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .zafiri-lang-option:hover,
+    .zafiri-lang-option.active {
+        color: #fff;
+    }
+
+    .zafiri-lang-separator {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* User menu when logged in */
+    .zafiri-user-menu {
+        position: relative;
+    }
+
+    .zafiri-user-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .zafiri-user-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .zafiri-user-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        background: #0d3d4d;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        min-width: 200px;
+        padding: 8px;
+        display: none;
+        z-index: 1000;
+    }
+
+    .zafiri-user-menu:hover .zafiri-user-dropdown {
+        display: block;
+    }
+
+    .zafiri-user-dropdown a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .zafiri-user-dropdown a:hover {
+        background: rgba(23, 162, 184, 0.3);
+        color: #fff;
+    }
+
+    .zafiri-user-dropdown a i {
+        width: 18px;
+        text-align: center;
+        color: #17a2b8;
+    }
+
+    .zafiri-dropdown-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 6px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .zafiri-navbar-search {
+            display: none;
         }
-    });
+        .zafiri-navbar-menu a span {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .zafiri-btn-register {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add custom class to body for ZAFIRI styling
+    document.body.classList.add('zafiri-portal');
+
+    // Wait for GeoNode header to load, then replace it
+    function replaceNavbar() {
+        const header = document.querySelector('.gn-main-header, .gn-brand-navbar, header');
+        if (!header) {
+            setTimeout(replaceNavbar, 100);
+            return;
+        }
+
+        // Check if we already replaced it
+        if (document.querySelector('.zafiri-navbar')) {
+            return;
+        }
+
+        // Get user info from GeoNode
+        const isAuthenticated = window.__GEONODE_CONFIG__ && window.__GEONODE_CONFIG__.user && window.__GEONODE_CONFIG__.user.pk;
+        const username = isAuthenticated ? window.__GEONODE_CONFIG__.user.username : null;
+        const isAdmin = isAuthenticated && (window.__GEONODE_CONFIG__.user.is_superuser || window.__GEONODE_CONFIG__.user.is_staff);
+
+        // Determine active page
+        const currentPath = window.location.pathname + window.location.hash;
+        const isHome = currentPath === '/' || currentPath === '';
+        const isData = currentPath.includes('dataset') || currentPath.includes('f=dataset');
+        const isMaps = currentPath.includes('f=map') || currentPath.includes('/map/');
+        const isDocs = currentPath.includes('document') || currentPath.includes('f=document');
+        const isAbout = currentPath.includes('/about');
+
+        // Create ZAFIRI navbar
+        const navbar = document.createElement('div');
+        navbar.className = 'zafiri-navbar';
+        navbar.innerHTML = `
+            <a href="/" class="zafiri-navbar-brand">
+                <div class="zafiri-navbar-logo">
+                    <img src="{% static 'img/zafiri_logo.svg' %}" alt="ZAFIRI">
+                </div>
+                <div class="zafiri-navbar-title">
+                    <span class="zafiri-navbar-title-main">ZAFIRI</span>
+                    <span class="zafiri-navbar-title-sub">Marine Atlas</span>
+                </div>
+            </a>
+
+            <ul class="zafiri-navbar-menu">
+                <li><a href="/" class="${isHome ? 'active' : ''}"><i class="fa fa-home"></i><span>Home</span></a></li>
+                <li><a href="/catalogue/#/search/?f=dataset" class="${isData ? 'active' : ''}"><i class="fa fa-database"></i><span>Data</span></a></li>
+                <li><a href="/catalogue/#/search/?f=map" class="${isMaps ? 'active' : ''}"><i class="fa fa-map"></i><span>Maps</span></a></li>
+                <li><a href="/catalogue/#/search/?f=document" class="${isDocs ? 'active' : ''}"><i class="fa fa-file-alt"></i><span>Docs</span></a></li>
+                <li><a href="/about/" class="${isAbout ? 'active' : ''}"><i class="fa fa-info-circle"></i><span>About</span></a></li>
+            </ul>
+
+            <div class="zafiri-navbar-search">
+                <i class="fa fa-search"></i>
+                <input type="text" placeholder="Search datasets, maps..." id="zafiriSearch">
+            </div>
+
+            <div class="zafiri-navbar-actions">
+                ${isAuthenticated ? `
+                    <div class="zafiri-user-menu">
+                        <div class="zafiri-user-btn">
+                            <i class="fa fa-user-circle"></i>
+                            <span>${username}</span>
+                            <i class="fa fa-angle-down"></i>
+                        </div>
+                        <div class="zafiri-user-dropdown">
+                            <a href="/profile/${username}/"><i class="fa fa-user"></i> Profile</a>
+                            <a href="/catalogue/#/search/?owner=${username}"><i class="fa fa-folder"></i> My Resources</a>
+                            ${isAdmin ? `
+                                <div class="zafiri-dropdown-divider"></div>
+                                <a href="/admin/"><i class="fa fa-cog"></i> Admin</a>
+                            ` : ''}
+                            <div class="zafiri-dropdown-divider"></div>
+                            <a href="/account/logout/"><i class="fa fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                ` : `
+                    <a href="/account/signup/" class="zafiri-btn-register">Register</a>
+                    <a href="/account/login/" class="zafiri-btn-login">Login</a>
+                `}
+                <div class="zafiri-lang-toggle">
+                    <span class="zafiri-lang-option active" data-lang="en">EN</span>
+                    <span class="zafiri-lang-separator">/</span>
+                    <span class="zafiri-lang-option" data-lang="sw">SW</span>
+                </div>
+            </div>
+        `;
+
+        // Replace or prepend the navbar
+        header.style.display = 'none';
+        header.parentNode.insertBefore(navbar, header);
+
+        // Setup search functionality
+        const searchInput = document.getElementById('zafiriSearch');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        window.location.href = '/catalogue/#/search/?q=' + encodeURIComponent(query);
+                    }
+                }
+            });
+        }
+
+        // Setup language toggle
+        const langOptions = navbar.querySelectorAll('.zafiri-lang-option');
+        langOptions.forEach(function(option) {
+            option.addEventListener('click', function() {
+                const lang = this.dataset.lang;
+                langOptions.forEach(function(opt) { opt.classList.remove('active'); });
+                this.classList.add('active');
+                document.cookie = 'django_language=' + lang + ';path=/';
+                window.location.reload();
+            });
+        });
+    }
+
+    // Start replacing navbar
+    replaceNavbar();
+
+    // Also try after a delay for React-rendered components
+    setTimeout(replaceNavbar, 500);
+    setTimeout(replaceNavbar, 1000);
+    setTimeout(replaceNavbar, 2000);
+});
 </script>
 {% endblock %}
