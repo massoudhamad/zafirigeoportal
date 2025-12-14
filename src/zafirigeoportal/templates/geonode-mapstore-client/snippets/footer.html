@@ -1,0 +1,241 @@
+{% extends "geonode-mapstore-client/snippets/footer.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block footer_content %}
+<footer class="gn-footer zafiri-footer">
+    <div class="footer-main">
+        <div class="container">
+            <div class="row">
+                <!-- Brand Column -->
+                <div class="col-md-4 footer-brand-col">
+                    <div class="footer-brand">
+                        <img src="{% static 'img/zafiri_logo.svg' %}" alt="ZAFIRI" class="footer-logo">
+                        <div class="footer-brand-text">
+                            <h4>ZAFIRI</h4>
+                            <p>Zanzibar Fisheries and Marine Resources Research Institute</p>
+                        </div>
+                    </div>
+                    <p class="footer-description">
+                        {% trans "Dedicated to marine research, fisheries management, and conservation of Zanzibar's rich marine biodiversity." %}
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-2 footer-links-col">
+                    <h5>{% trans "Data" %}</h5>
+                    <ul class="footer-links">
+                        <li><a href="/catalogue/#/search/?f=dataset">{% trans "Datasets" %}</a></li>
+                        <li><a href="/catalogue/#/search/?f=map">{% trans "Maps" %}</a></li>
+                        <li><a href="/catalogue/#/search/?f=document">{% trans "Documents" %}</a></li>
+                        <li><a href="/catalogue/#/upload/dataset">{% trans "Upload Data" %}</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div class="col-md-2 footer-links-col">
+                    <h5>{% trans "Resources" %}</h5>
+                    <ul class="footer-links">
+                        <li><a href="/catalogue/#/search/?f=geostory">{% trans "GeoStories" %}</a></li>
+                        <li><a href="/catalogue/#/search/?f=dashboard">{% trans "Dashboards" %}</a></li>
+                        <li><a href="{% url 'services' %}">{% trans "Services" %}</a></li>
+                        <li><a href="{% url 'help' %}">{% trans "Help" %}</a></li>
+                    </ul>
+                </div>
+
+                <!-- About -->
+                <div class="col-md-2 footer-links-col">
+                    <h5>{% trans "About" %}</h5>
+                    <ul class="footer-links">
+                        <li><a href="/about/">{% trans "About ZAFIRI" %}</a></li>
+                        <li><a href="{% url 'profile_browse' %}">{% trans "People" %}</a></li>
+                        <li><a href="{% url 'group_list' %}">{% trans "Groups" %}</a></li>
+                        <li><a href="{% url 'developer' %}">{% trans "Developers" %}</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="col-md-2 footer-links-col">
+                    <h5>{% trans "Contact" %}</h5>
+                    <ul class="footer-contact">
+                        <li>
+                            <i class="fa fa-map-marker-alt"></i>
+                            <span>Stone Town, Zanzibar</span>
+                        </li>
+                        <li>
+                            <i class="fa fa-envelope"></i>
+                            <a href="mailto:info@zafiri.go.tz">info@zafiri.go.tz</a>
+                        </li>
+                        <li>
+                            <i class="fa fa-phone"></i>
+                            <span>+255 24 223 xxxx</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="copyright">
+                        &copy; {% now "Y" %} ZAFIRI - Zanzibar Fisheries and Marine Resources Research Institute
+                    </p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p class="powered-by">
+                        {% trans "Powered by" %} <a href="https://geonode.org" target="_blank">GeoNode</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .zafiri-footer {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+        color: #ffffff;
+        padding: 0;
+    }
+
+    .footer-main {
+        padding: 50px 0 40px;
+    }
+
+    .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .footer-logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .footer-brand-text h4 {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .footer-brand-text p {
+        font-size: 11px;
+        opacity: 0.8;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .footer-description {
+        font-size: 14px;
+        opacity: 0.85;
+        line-height: 1.7;
+        max-width: 300px;
+    }
+
+    .footer-links-col h5 {
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+        color: #17a2b8;
+    }
+
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 10px;
+    }
+
+    .footer-links a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .footer-links a:hover {
+        color: #17a2b8;
+        padding-left: 5px;
+    }
+
+    .footer-contact {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-contact li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .footer-contact li i {
+        color: #17a2b8;
+        margin-top: 2px;
+        width: 16px;
+    }
+
+    .footer-contact a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+    }
+
+    .footer-contact a:hover {
+        color: #17a2b8;
+    }
+
+    .footer-bottom {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-bottom p {
+        margin: 0;
+        font-size: 13px;
+        opacity: 0.8;
+    }
+
+    .footer-bottom .powered-by a {
+        color: #17a2b8;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .footer-bottom .powered-by a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .footer-main {
+            padding: 30px 0;
+        }
+
+        .footer-links-col {
+            margin-top: 30px;
+        }
+
+        .footer-bottom .text-right {
+            text-align: left !important;
+            margin-top: 10px;
+        }
+    }
+</style>
+{% endblock %}

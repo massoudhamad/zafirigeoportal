@@ -1,0 +1,159 @@
+{% extends "geonode-mapstore-client/snippets/topbar.html" %}
+{% load static %}
+{% load i18n %}
+{% load get_menu_json %}
+
+{% block left_menu %}
+<ul class="gn-menu-list">
+    <!-- Home/Atlas Link -->
+    <li class="gn-menu-item">
+        <a href="/" class="gn-home-link" title="{% trans 'Marine Atlas Home' %}">
+            <i class="fa fa-globe"></i>
+            <span>{% trans "Atlas" %}</span>
+        </a>
+    </li>
+
+    <!-- Data Menu -->
+    <li class="gn-menu-item gn-menu-item-dropdown">
+        <a href="#" class="gn-menu-item-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-database"></i>
+            <span>{% trans "Data" %}</span>
+            <i class="fa fa-angle-down"></i>
+        </a>
+        <ul class="gn-menu-dropdown">
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=dataset">
+                    <i class="fa fa-layer-group"></i>
+                    <span>{% trans "All Datasets" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=dataset&filter{category.identifier.in}=oceans">
+                    <i class="fa fa-water"></i>
+                    <span>{% trans "Oceanography" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=dataset&filter{category.identifier.in}=biota">
+                    <i class="fa fa-fish"></i>
+                    <span>{% trans "Fisheries & Biota" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=dataset&filter{category.identifier.in}=environment">
+                    <i class="fa fa-leaf"></i>
+                    <span>{% trans "Ecosystems" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-divider"></li>
+            <li class="gn-menu-item gn-menu-item-highlight">
+                <a href="/catalogue/#/upload/dataset">
+                    <i class="fa fa-cloud-upload-alt"></i>
+                    <span>{% trans "Upload Dataset" %}</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Maps Menu -->
+    <li class="gn-menu-item gn-menu-item-dropdown">
+        <a href="#" class="gn-menu-item-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-map"></i>
+            <span>{% trans "Maps" %}</span>
+            <i class="fa fa-angle-down"></i>
+        </a>
+        <ul class="gn-menu-dropdown">
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=map">
+                    <i class="fa fa-th-large"></i>
+                    <span>{% trans "All Maps" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=map&filter{featured}=true">
+                    <i class="fa fa-star"></i>
+                    <span>{% trans "Featured Maps" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-divider"></li>
+            <li class="gn-menu-item gn-menu-item-highlight">
+                <a href="/catalogue/#/map/new">
+                    <i class="fa fa-plus-circle"></i>
+                    <span>{% trans "Create New Map" %}</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Resources Menu -->
+    <li class="gn-menu-item gn-menu-item-dropdown">
+        <a href="#" class="gn-menu-item-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-folder-open"></i>
+            <span>{% trans "Resources" %}</span>
+            <i class="fa fa-angle-down"></i>
+        </a>
+        <ul class="gn-menu-dropdown">
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=document">
+                    <i class="fa fa-file-pdf"></i>
+                    <span>{% trans "Documents" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=geostory">
+                    <i class="fa fa-book-open"></i>
+                    <span>{% trans "GeoStories" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-item">
+                <a href="/catalogue/#/search/?f=dashboard">
+                    <i class="fa fa-chart-bar"></i>
+                    <span>{% trans "Dashboards" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-divider"></li>
+            <li class="gn-menu-item gn-menu-item-highlight">
+                <a href="/catalogue/#/upload/document">
+                    <i class="fa fa-file-upload"></i>
+                    <span>{% trans "Upload Document" %}</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- About Menu -->
+    <li class="gn-menu-item gn-menu-item-dropdown">
+        <a href="#" class="gn-menu-item-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-info-circle"></i>
+            <span>{% trans "About" %}</span>
+            <i class="fa fa-angle-down"></i>
+        </a>
+        <ul class="gn-menu-dropdown">
+            <li class="gn-menu-item">
+                <a href="/about/">
+                    <i class="fa fa-landmark"></i>
+                    <span>{% trans "About ZAFIRI" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-item">
+                <a href="{% url 'profile_browse' %}">
+                    <i class="fa fa-users"></i>
+                    <span>{% trans "People" %}</span>
+                </a>
+            </li>
+            <li class="gn-menu-item">
+                <a href="{% url 'group_list' %}">
+                    <i class="fa fa-user-friends"></i>
+                    <span>{% trans "Groups" %}</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+</ul>
+{% endblock %}
+
+{% block right_menu %}
+<ul class="gn-menu-list gn-menu-list-right">
+    {% block language_selector %}{% endblock %}
+</ul>
+{% endblock %}

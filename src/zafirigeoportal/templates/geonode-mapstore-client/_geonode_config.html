@@ -1,9 +1,97 @@
 {% extends 'geonode-mapstore-client/_geonode_config.html' %}
+{% load static %}
+
 {% block override_local_config %}
 <script>
     window.__GEONODE_CONFIG__.overrideLocalConfig = function(localConfig, _) {
-        // Here the localConfig can be overridden and/or extended
+        // ZAFIRI Marine Atlas Configuration
+
+        // Custom map configuration for Zanzibar
+        if (localConfig.map) {
+            // Set default center to Zanzibar
+            localConfig.map.center = {
+                x: 39.3,
+                y: -5.9,
+                crs: "EPSG:4326"
+            };
+            localConfig.map.zoom = 9;
+        }
+
+        // Custom theme colors
+        if (localConfig.theme) {
+            localConfig.theme = {
+                ...localConfig.theme,
+                primaryColor: '#1a5f7a',
+                primaryContrastColor: '#ffffff',
+                infoColor: '#17a2b8',
+                successColor: '#27ae60',
+                warningColor: '#f39c12',
+                dangerColor: '#e74c3c'
+            };
+        }
+
+        // Add custom background layers
+        if (localConfig.backgroundLayers) {
+            localConfig.backgroundLayers = [
+                {
+                    type: 'osm',
+                    title: 'OpenStreetMap',
+                    name: 'osm',
+                    source: 'osm',
+                    visibility: false,
+                    group: 'background'
+                },
+                {
+                    type: 'tileprovider',
+                    title: 'Ocean Basemap',
+                    name: 'ocean_basemap',
+                    provider: 'Esri.OceanBasemap',
+                    visibility: true,
+                    group: 'background'
+                },
+                {
+                    type: 'tileprovider',
+                    title: 'Satellite',
+                    name: 'satellite',
+                    provider: 'Esri.WorldImagery',
+                    visibility: false,
+                    group: 'background'
+                }
+            ];
+        }
+
+        // Customize menu items to include Marine Atlas home
+        if (localConfig.menu && localConfig.menu.items) {
+            // Add Marine Atlas as first menu item
+            localConfig.menu.items.unshift({
+                type: 'link',
+                href: '/',
+                label: 'Marine Atlas',
+                icon: 'globe'
+            });
+        }
+
         return localConfig;
     };
+</script>
+{% endblock %}
+
+{% block extra_script %}
+<!-- ZAFIRI Marine Atlas Custom Scripts -->
+<script>
+    // Add Marine Atlas branding enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add custom class to body for ZAFIRI styling
+        document.body.classList.add('zafiri-portal');
+
+        // Enhance logo area if needed
+        const logoElement = document.querySelector('.gn-logo');
+        if (logoElement && !logoElement.querySelector('.gn-logo-text')) {
+            const logoText = document.createElement('div');
+            logoText.className = 'gn-logo-text';
+            logoText.innerHTML = '<span class="gn-logo-title">ZAFIRI</span><span class="gn-logo-subtitle">Marine Atlas</span>';
+            logoElement.appendChild(logoText);
+        }
+    });
 </script>
 {% endblock %}

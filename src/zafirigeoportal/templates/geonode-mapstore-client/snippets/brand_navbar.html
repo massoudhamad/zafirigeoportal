@@ -1,0 +1,166 @@
+{% extends "geonode-mapstore-client/snippets/brand_navbar.html" %}
+{% load static %}
+
+{% block extra_style %}
+<style>
+    /* ZAFIRI Marine Atlas Brand Styling */
+    .gn-brand-navbar {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+    }
+
+    .gn-brand-navbar-container {
+        max-width: 100% !important;
+        padding: 0 20px !important;
+    }
+
+    .gn-brand-navbar-left .gn-logo img {
+        height: 42px !important;
+        margin-right: 10px;
+    }
+
+    .gn-brand-navbar-left .gn-logo-text {
+        display: flex;
+        flex-direction: column;
+        color: #ffffff !important;
+    }
+
+    .gn-logo-title {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        line-height: 1.2;
+    }
+
+    .gn-logo-subtitle {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0.8;
+    }
+
+    /* Navigation Links */
+    .gn-menu-list .gn-menu-item > a,
+    .gn-menu-list .gn-menu-item > button {
+        color: rgba(255, 255, 255, 0.85) !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .gn-menu-list .gn-menu-item > a:hover,
+    .gn-menu-list .gn-menu-item > button:hover {
+        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .gn-menu-list .gn-menu-item.active > a,
+    .gn-menu-list .gn-menu-item.active > button {
+        color: #ffffff !important;
+        background: rgba(23, 162, 184, 0.3) !important;
+    }
+
+    /* User Menu */
+    .gn-user-menu-button .gn-user-info-name {
+        color: #ffffff !important;
+    }
+
+    /* Dropdown Menus */
+    .gn-menu-dropdown {
+        background: #0d3d4d !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .gn-menu-dropdown .gn-menu-item > a,
+    .gn-menu-dropdown .gn-menu-item > button {
+        color: rgba(255, 255, 255, 0.85) !important;
+        padding: 10px 16px !important;
+    }
+
+    .gn-menu-dropdown .gn-menu-item > a:hover,
+    .gn-menu-dropdown .gn-menu-item > button:hover {
+        background: rgba(23, 162, 184, 0.2) !important;
+        color: #ffffff !important;
+    }
+
+    /* Home Button Enhancement */
+    .gn-home-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(23, 162, 184, 0.2);
+        border-radius: 6px;
+        color: #ffffff !important;
+        text-decoration: none;
+        font-weight: 600;
+        margin-right: 10px;
+    }
+
+    .gn-home-link:hover {
+        background: rgba(23, 162, 184, 0.4);
+    }
+
+    .gn-home-link i {
+        font-size: 16px;
+    }
+
+    /* Search Bar */
+    .gn-main-search input {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: none !important;
+        border-radius: 20px !important;
+        color: #ffffff !important;
+        padding: 10px 20px 10px 44px !important;
+    }
+
+    .gn-main-search input::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .gn-main-search input:focus {
+        background: rgba(255, 255, 255, 0.25) !important;
+        box-shadow: 0 0 0 2px #17a2b8 !important;
+    }
+
+    /* Login/Register Buttons */
+    .gn-menu-list .btn-login,
+    .gn-user-signin-btn {
+        background: #ffffff !important;
+        color: #0d3d4d !important;
+        border-radius: 20px !important;
+        padding: 8px 20px !important;
+        font-weight: 600 !important;
+        border: none !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .gn-menu-list .btn-login:hover,
+    .gn-user-signin-btn:hover {
+        background: #17a2b8 !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 992px) {
+        .gn-logo-subtitle {
+            display: none;
+        }
+        .gn-logo-title {
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block logo_src %}
+{% static 'img/zafiri_logo.svg' %}
+{% endblock %}
+
+{% block logo_text %}
+<div class="gn-logo-text">
+    <span class="gn-logo-title">ZAFIRI</span>
+    <span class="gn-logo-subtitle">Marine Atlas</span>
+</div>
+{% endblock %}

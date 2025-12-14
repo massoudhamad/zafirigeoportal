@@ -1,0 +1,363 @@
+{% extends "geonode-mapstore-client/snippets/custom_theme.html" %}
+{% load static %}
+
+{% block content %}
+<link href="{% static 'css/zafiri_geonode_theme.css' %}" rel="stylesheet" />
+
+{% if not custom_theme.extra_css %}
+<style>
+    :root {
+        /* Primary Colors - Ocean/Marine Theme */
+        --gn-primary: #1a5f7a;
+        --gn-primary-contrast: #ffffff;
+        --gn-info: #17a2b8;
+        --gn-info-contrast: #ffffff;
+        --gn-success: #27ae60;
+        --gn-success-contrast: #ffffff;
+        --gn-warning: #f39c12;
+        --gn-warning-contrast: #ffffff;
+        --gn-danger: #e74c3c;
+        --gn-danger-contrast: #ffffff;
+
+        /* Main Interface */
+        --gn-main-color: #2c3e50;
+        --gn-main-bg: #ffffff;
+        --gn-main-border-color: #dce4ec;
+        --gn-main-variant-color: #2c3e50;
+        --gn-main-variant-bg: #f8f9fa;
+        --gn-main-hover-color: #0d3d4d;
+        --gn-main-hover-bg: #e8f4f8;
+
+        /* Placeholders & Disabled */
+        --gn-placeholder-color: #95a5a6;
+        --gn-placeholder-bg: #ecf0f1;
+        --gn-disabled-color: #bdc3c7;
+        --gn-disabled-bg: #ecf0f1;
+
+        /* Links */
+        --gn-link-color: #1a5f7a;
+        --gn-link-hover-color: #17a2b8;
+
+        /* Images */
+        --gn-image-color: #2c3e50;
+        --gn-image-bg: #f5f7f9;
+
+        /* Focus */
+        --gn-focus-color: rgba(26, 95, 122, 0.4);
+
+        /* Footer - Marine Deep */
+        --gn-footer-color: #ffffff;
+        --gn-footer-bg: #0d3d4d;
+        --gn-footer-link-color: #ffffff;
+        --gn-footer-link-hover-color: #17a2b8;
+
+        /* Badge */
+        --gn-badge-color: #ffffff;
+        --gn-badge-bg: #1a5f7a;
+
+        /* Loader */
+        --gn-loader-color: #1a5f7a;
+        --gn-loader-fade-color: rgba(26, 95, 122, 0.2);
+        --gn-loader-primary-contrast-color: #ffffff;
+        --gn-loader-primary-contrast-fade-color: rgba(255, 255, 255, 0.2);
+        --gn-loader-primary-color: #1a5f7a;
+        --gn-loader-primary-fade-color: rgba(26, 95, 122, 0.2);
+
+        /* Jumbotron/Hero - Ocean Deep */
+        --gn-jumbotron-color: #ffffff;
+        --gn-jumbotron-bg: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%);
+
+        /* Timeline */
+        --gn-timeline-selected-bg: rgba(26, 95, 122, 0.1);
+        --gn-timeline-histogram-bg: rgba(26, 95, 122, 0.5);
+        --gn-timeline-histogram-color: #0d3d4d;
+        --gn-timeline-range-bg: rgba(0, 0, 0, 0.2);
+        --gn-timeline-playback-range-bg: rgba(39, 174, 96, 0.2);
+
+        /* Primary Button */
+        --gn-button-primary-color: #ffffff;
+        --gn-button-primary-bg: #1a5f7a;
+        --gn-button-primary-border-color: #1a5f7a;
+        --gn-button-primary-focus-color: #ffffff;
+        --gn-button-primary-focus-bg: #0d3d4d;
+        --gn-button-primary-focus-border-color: #0d3d4d;
+        --gn-button-primary-hover-color: #ffffff;
+        --gn-button-primary-hover-bg: #17a2b8;
+        --gn-button-primary-hover-border-color: #17a2b8;
+        --gn-button-primary-active-color: #ffffff;
+        --gn-button-primary-active-bg: #0d3d4d;
+        --gn-button-primary-active-border-color: #0d3d4d;
+        --gn-button-primary-badge-color: #1a5f7a;
+        --gn-button-primary-badge-bg: #ffffff;
+
+        /* Info Button */
+        --gn-button-info-color: #ffffff;
+        --gn-button-info-bg: #17a2b8;
+        --gn-button-info-border-color: #17a2b8;
+        --gn-button-info-hover-color: #ffffff;
+        --gn-button-info-hover-bg: #138496;
+        --gn-button-info-hover-border-color: #138496;
+
+        /* Success Button */
+        --gn-button-success-color: #ffffff;
+        --gn-button-success-bg: #27ae60;
+        --gn-button-success-border-color: #27ae60;
+        --gn-button-success-hover-color: #ffffff;
+        --gn-button-success-hover-bg: #1e8449;
+        --gn-button-success-hover-border-color: #1e8449;
+
+        /* Default Button */
+        --gn-button-color: #2c3e50;
+        --gn-button-bg: #ffffff;
+        --gn-button-border-color: #dce4ec;
+        --gn-button-hover-color: #0d3d4d;
+        --gn-button-hover-bg: #e8f4f8;
+        --gn-button-hover-border-color: #1a5f7a;
+
+        /* Tray Button */
+        --gn-button-tray-color: #2c3e50;
+        --gn-button-tray-bg: #ffffff;
+        --gn-button-tray-border-color: #1a5f7a;
+        --gn-button-tray-hover-color: #0d3d4d;
+        --gn-button-tray-hover-bg: #e8f4f8;
+        --gn-button-tray-hover-border-color: #17a2b8;
+    }
+
+    /* ============================================
+       ZAFIRI Global Enhancements
+       ============================================ */
+
+    /* Font Import */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }
+
+    /* Header/Navbar Enhancement */
+    .gn-brand-navbar {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15) !important;
+        height: 64px !important;
+    }
+
+    /* Card Styling */
+    .gn-card,
+    .card {
+        border-radius: 12px !important;
+        border: 1px solid #dce4ec !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .gn-card:hover,
+    .card:hover {
+        box-shadow: 0 8px 25px rgba(26, 95, 122, 0.15) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    /* Resource Cards */
+    .gn-resource-card {
+        border-radius: 12px !important;
+        overflow: hidden;
+    }
+
+    .gn-resource-card .gn-resource-card-image-wrapper {
+        background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4d 100%);
+    }
+
+    /* Buttons */
+    .btn-primary,
+    .gn-button-primary {
+        background: linear-gradient(135deg, #1a5f7a 0%, #17a2b8 100%) !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .btn-primary:hover,
+    .gn-button-primary:hover {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(26, 95, 122, 0.3) !important;
+    }
+
+    /* Form Inputs */
+    .form-control,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        border-radius: 8px !important;
+        border: 1px solid #dce4ec !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .form-control:focus,
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: #1a5f7a !important;
+        box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.15) !important;
+    }
+
+    /* Sidebar */
+    .gn-details-panel,
+    .gn-filter-form {
+        background: #f8f9fa !important;
+        border-radius: 12px !important;
+    }
+
+    /* Footer */
+    .gn-footer,
+    footer {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+        border-top: 3px solid #17a2b8 !important;
+    }
+
+    /* Map Viewer Enhancements */
+    .gn-viewer-layout {
+        background: #f5f7f9;
+    }
+
+    .gn-toc-container {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Hero Section Override */
+    .gn-hero-section {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 50%, #17a2b8 100%) !important;
+        min-height: 300px;
+    }
+
+    .gn-hero-section h1 {
+        font-weight: 700 !important;
+        letter-spacing: 0.5px;
+    }
+
+    /* Breadcrumb */
+    .gn-breadcrumb {
+        background: transparent !important;
+        padding: 15px 0 !important;
+    }
+
+    .gn-breadcrumb a {
+        color: #1a5f7a !important;
+    }
+
+    /* Tabs */
+    .nav-tabs .nav-link.active {
+        color: #1a5f7a !important;
+        border-bottom: 3px solid #1a5f7a !important;
+        font-weight: 600 !important;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #17a2b8 !important;
+    }
+
+    /* Pagination */
+    .pagination .page-link {
+        color: #1a5f7a !important;
+        border-radius: 6px !important;
+        margin: 0 2px !important;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: #1a5f7a !important;
+        border-color: #1a5f7a !important;
+        color: #ffffff !important;
+    }
+
+    /* Tags/Badges */
+    .badge,
+    .tag {
+        border-radius: 20px !important;
+        padding: 4px 12px !important;
+        font-weight: 500 !important;
+    }
+
+    .badge-primary {
+        background: #1a5f7a !important;
+    }
+
+    .badge-info {
+        background: #17a2b8 !important;
+    }
+
+    /* Modal */
+    .modal-content {
+        border-radius: 16px !important;
+        border: none !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #0d3d4d 0%, #1a5f7a 100%) !important;
+        color: #ffffff !important;
+        border-radius: 16px 16px 0 0 !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #1a5f7a;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #0d3d4d;
+    }
+
+    /* Selection */
+    ::selection {
+        background: rgba(26, 95, 122, 0.3);
+        color: #0d3d4d;
+    }
+
+    /* Loading Spinner */
+    .gn-spinner {
+        border-top-color: #1a5f7a !important;
+    }
+
+    /* Alert Enhancements */
+    .alert {
+        border-radius: 10px !important;
+        border-left-width: 4px !important;
+    }
+
+    .alert-info {
+        border-left-color: #17a2b8 !important;
+        background: rgba(23, 162, 184, 0.1) !important;
+    }
+
+    .alert-success {
+        border-left-color: #27ae60 !important;
+        background: rgba(39, 174, 96, 0.1) !important;
+    }
+
+    .alert-warning {
+        border-left-color: #f39c12 !important;
+        background: rgba(243, 156, 18, 0.1) !important;
+    }
+
+    .alert-danger {
+        border-left-color: #e74c3c !important;
+        background: rgba(231, 76, 60, 0.1) !important;
+    }
+</style>
+{% endif %}
+{% endblock %}
