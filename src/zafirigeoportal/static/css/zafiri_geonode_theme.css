@@ -604,3 +604,270 @@ select:focus {
         display: none;
     }
 }
+
+/* ============================================
+   ZAFIRI Consistent Navigation Styles
+   ============================================ */
+
+/* Main Navigation Links */
+.zafiri-main-nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.zafiri-main-nav .gn-menu-item {
+    margin: 0 !important;
+}
+
+.zafiri-main-nav .gn-menu-link {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 16px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.zafiri-main-nav .gn-menu-link:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.zafiri-main-nav .gn-menu-link i {
+    font-size: 16px;
+}
+
+/* Search Bar in Navigation */
+.gn-search-item {
+    margin-left: 16px !important;
+}
+
+.gn-search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.gn-search-bar i {
+    position: absolute;
+    left: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.gn-search-input {
+    width: 280px;
+    height: 38px;
+    padding: 0 16px 0 40px !important;
+    border: none !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    transition: all 0.2s ease !important;
+}
+
+.gn-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.gn-search-input:focus {
+    background: rgba(255, 255, 255, 0.25) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.3) !important;
+}
+
+/* Auth Navigation */
+.zafiri-auth-nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+/* Language Toggle */
+.gn-lang-selector {
+    margin-right: 8px !important;
+}
+
+.gn-lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+}
+
+.gn-lang-option {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.gn-lang-option:hover,
+.gn-lang-option.active {
+    color: #ffffff;
+}
+
+.gn-lang-separator {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 12px;
+}
+
+/* Register Button */
+.gn-btn-register {
+    padding: 8px 20px !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.gn-btn-register:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Login Button */
+.gn-btn-login {
+    padding: 8px 20px !important;
+    background: var(--zafiri-primary-light) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.gn-btn-login:hover {
+    background: #ffffff !important;
+    color: var(--zafiri-primary-dark) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* User Menu when logged in */
+.gn-user-menu {
+    position: relative;
+}
+
+.gn-user-btn {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px 14px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 25px !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.gn-user-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.gn-user-btn i.fa-user-circle {
+    font-size: 20px;
+}
+
+.gn-user-btn i.fa-angle-down {
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.gn-user-menu .gn-menu-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: var(--zafiri-primary-dark) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    min-width: 200px;
+    padding: 8px !important;
+    display: none;
+    z-index: 1000;
+}
+
+.gn-user-menu:hover .gn-menu-dropdown,
+.gn-user-menu .gn-menu-dropdown:hover {
+    display: block;
+}
+
+.gn-user-menu .gn-menu-dropdown li {
+    list-style: none;
+}
+
+.gn-user-menu .gn-menu-dropdown li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.gn-user-menu .gn-menu-dropdown li a:hover {
+    background: rgba(23, 162, 184, 0.3);
+    color: #ffffff;
+}
+
+.gn-user-menu .gn-menu-dropdown li a i {
+    width: 18px;
+    text-align: center;
+    color: var(--zafiri-primary-light);
+}
+
+.gn-user-menu .gn-menu-dropdown .gn-menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 6px 0;
+}
+
+/* Responsive Navigation */
+@media (max-width: 1200px) {
+    .gn-search-input {
+        width: 200px;
+    }
+}
+
+@media (max-width: 992px) {
+    .gn-search-item {
+        display: none !important;
+    }
+
+    .zafiri-main-nav .gn-menu-link span {
+        display: none;
+    }
+
+    .zafiri-main-nav .gn-menu-link {
+        padding: 10px 12px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .gn-btn-register {
+        display: none !important;
+    }
+}

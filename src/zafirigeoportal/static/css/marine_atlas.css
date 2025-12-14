@@ -253,21 +253,41 @@ body.marine-atlas {
     color: rgba(255, 255, 255, 0.4);
 }
 
+.btn-register {
+    padding: 8px 20px;
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.btn-register:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--text-light);
+    color: var(--text-light);
+}
+
 .btn-login {
     padding: 8px 20px;
-    background: var(--text-light);
-    color: var(--primary-dark);
+    background: var(--accent-teal);
+    color: var(--text-light);
     border: none;
     border-radius: 20px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
+    text-decoration: none;
     transition: var(--transition-fast);
 }
 
 .btn-login:hover {
-    background: var(--accent-teal);
-    color: var(--text-light);
+    background: var(--text-light);
+    color: var(--primary-dark);
     transform: translateY(-1px);
 }
 

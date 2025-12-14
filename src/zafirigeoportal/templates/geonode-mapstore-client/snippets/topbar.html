@@ -4,156 +4,126 @@
 {% load get_menu_json %}
 
 {% block left_menu %}
-<ul class="gn-menu-list">
+<ul class="gn-menu-list zafiri-main-nav">
     <!-- Home/Atlas Link -->
     <li class="gn-menu-item">
-        <a href="/" class="gn-home-link" title="{% trans 'Marine Atlas Home' %}">
-            <i class="fa fa-globe"></i>
-            <span>{% trans "Atlas" %}</span>
+        <a href="/" class="gn-menu-link" title="{% trans 'Home' %}">
+            <i class="fa fa-home"></i>
+            <span>{% trans "Home" %}</span>
         </a>
     </li>
 
-    <!-- Data Menu -->
-    <li class="gn-menu-item gn-menu-item-dropdown">
-        <a href="#" class="gn-menu-item-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <!-- Data Link -->
+    <li class="gn-menu-item">
+        <a href="/catalogue/#/search/?f=dataset" class="gn-menu-link" title="{% trans 'Datasets' %}">
             <i class="fa fa-database"></i>
             <span>{% trans "Data" %}</span>
-            <i class="fa fa-angle-down"></i>
         </a>
-        <ul class="gn-menu-dropdown">
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=dataset">
-                    <i class="fa fa-layer-group"></i>
-                    <span>{% trans "All Datasets" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=dataset&filter{category.identifier.in}=oceans">
-                    <i class="fa fa-water"></i>
-                    <span>{% trans "Oceanography" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=dataset&filter{category.identifier.in}=biota">
-                    <i class="fa fa-fish"></i>
-                    <span>{% trans "Fisheries & Biota" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=dataset&filter{category.identifier.in}=environment">
-                    <i class="fa fa-leaf"></i>
-                    <span>{% trans "Ecosystems" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-divider"></li>
-            <li class="gn-menu-item gn-menu-item-highlight">
-                <a href="/catalogue/#/upload/dataset">
-                    <i class="fa fa-cloud-upload-alt"></i>
-                    <span>{% trans "Upload Dataset" %}</span>
-                </a>
-            </li>
-        </ul>
     </li>
 
-    <!-- Maps Menu -->
-    <li class="gn-menu-item gn-menu-item-dropdown">
-        <a href="#" class="gn-menu-item-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <!-- Maps Link -->
+    <li class="gn-menu-item">
+        <a href="/catalogue/#/search/?f=map" class="gn-menu-link" title="{% trans 'Maps' %}">
             <i class="fa fa-map"></i>
             <span>{% trans "Maps" %}</span>
-            <i class="fa fa-angle-down"></i>
         </a>
-        <ul class="gn-menu-dropdown">
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=map">
-                    <i class="fa fa-th-large"></i>
-                    <span>{% trans "All Maps" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=map&filter{featured}=true">
-                    <i class="fa fa-star"></i>
-                    <span>{% trans "Featured Maps" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-divider"></li>
-            <li class="gn-menu-item gn-menu-item-highlight">
-                <a href="/catalogue/#/map/new">
-                    <i class="fa fa-plus-circle"></i>
-                    <span>{% trans "Create New Map" %}</span>
-                </a>
-            </li>
-        </ul>
     </li>
 
-    <!-- Resources Menu -->
-    <li class="gn-menu-item gn-menu-item-dropdown">
-        <a href="#" class="gn-menu-item-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-folder-open"></i>
-            <span>{% trans "Resources" %}</span>
-            <i class="fa fa-angle-down"></i>
+    <!-- Docs Link -->
+    <li class="gn-menu-item">
+        <a href="/catalogue/#/search/?f=document" class="gn-menu-link" title="{% trans 'Documents' %}">
+            <i class="fa fa-file-alt"></i>
+            <span>{% trans "Docs" %}</span>
         </a>
-        <ul class="gn-menu-dropdown">
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=document">
-                    <i class="fa fa-file-pdf"></i>
-                    <span>{% trans "Documents" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=geostory">
-                    <i class="fa fa-book-open"></i>
-                    <span>{% trans "GeoStories" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-item">
-                <a href="/catalogue/#/search/?f=dashboard">
-                    <i class="fa fa-chart-bar"></i>
-                    <span>{% trans "Dashboards" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-divider"></li>
-            <li class="gn-menu-item gn-menu-item-highlight">
-                <a href="/catalogue/#/upload/document">
-                    <i class="fa fa-file-upload"></i>
-                    <span>{% trans "Upload Document" %}</span>
-                </a>
-            </li>
-        </ul>
     </li>
 
-    <!-- About Menu -->
-    <li class="gn-menu-item gn-menu-item-dropdown">
-        <a href="#" class="gn-menu-item-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <!-- About Link -->
+    <li class="gn-menu-item">
+        <a href="/about/" class="gn-menu-link" title="{% trans 'About ZAFIRI' %}">
             <i class="fa fa-info-circle"></i>
             <span>{% trans "About" %}</span>
-            <i class="fa fa-angle-down"></i>
         </a>
-        <ul class="gn-menu-dropdown">
-            <li class="gn-menu-item">
-                <a href="/about/">
-                    <i class="fa fa-landmark"></i>
-                    <span>{% trans "About ZAFIRI" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-item">
-                <a href="{% url 'profile_browse' %}">
-                    <i class="fa fa-users"></i>
-                    <span>{% trans "People" %}</span>
-                </a>
-            </li>
-            <li class="gn-menu-item">
-                <a href="{% url 'group_list' %}">
-                    <i class="fa fa-user-friends"></i>
-                    <span>{% trans "Groups" %}</span>
-                </a>
-            </li>
-        </ul>
+    </li>
+
+    <!-- Search Bar -->
+    <li class="gn-menu-item gn-search-item">
+        <div class="gn-search-bar">
+            <i class="fa fa-search"></i>
+            <input type="text" class="gn-search-input" placeholder="{% trans 'Search...' %}" id="gnSearchInput">
+        </div>
     </li>
 </ul>
 {% endblock %}
 
 {% block right_menu %}
-<ul class="gn-menu-list gn-menu-list-right">
-    {% block language_selector %}{% endblock %}
+<ul class="gn-menu-list gn-menu-list-right zafiri-auth-nav">
+    <!-- Language Selector -->
+    <li class="gn-menu-item gn-lang-selector">
+        <div class="gn-lang-toggle">
+            <span class="gn-lang-option active" data-lang="en">EN</span>
+            <span class="gn-lang-separator">/</span>
+            <span class="gn-lang-option" data-lang="sw">SW</span>
+        </div>
+    </li>
+
+    {% if user.is_authenticated %}
+    <!-- User Menu when logged in -->
+    <li class="gn-menu-item gn-user-menu">
+        <a href="#" class="gn-user-btn" data-toggle="dropdown">
+            <i class="fa fa-user-circle"></i>
+            <span>{{ user.username }}</span>
+            <i class="fa fa-angle-down"></i>
+        </a>
+        <ul class="gn-menu-dropdown">
+            <li><a href="{% url 'profile_detail' user.username %}"><i class="fa fa-user"></i> {% trans "Profile" %}</a></li>
+            <li><a href="/catalogue/#/search/?owner={{ user.username }}"><i class="fa fa-folder"></i> {% trans "My Resources" %}</a></li>
+            {% if user.is_superuser or user.is_staff %}
+            <li class="gn-menu-divider"></li>
+            <li><a href="/admin/"><i class="fa fa-cog"></i> {% trans "Admin" %}</a></li>
+            {% endif %}
+            <li class="gn-menu-divider"></li>
+            <li><a href="{% url 'account_logout' %}"><i class="fa fa-sign-out-alt"></i> {% trans "Logout" %}</a></li>
+        </ul>
+    </li>
+    {% else %}
+    <!-- Register & Login when not authenticated -->
+    <li class="gn-menu-item">
+        <a href="{% url 'account_signup' %}" class="gn-btn-register">{% trans "Register" %}</a>
+    </li>
+    <li class="gn-menu-item">
+        <a href="{% url 'account_login' %}" class="gn-btn-login">{% trans "Login" %}</a>
+    </li>
+    {% endif %}
 </ul>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('gnSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    window.location.href = '/catalogue/#/search/?q=' + encodeURIComponent(query);
+                }
+            }
+        });
+    }
+
+    // Language toggle
+    const langOptions = document.querySelectorAll('.gn-lang-option');
+    langOptions.forEach(function(option) {
+        option.addEventListener('click', function() {
+            const lang = this.dataset.lang;
+            // Update active state
+            langOptions.forEach(function(opt) { opt.classList.remove('active'); });
+            this.classList.add('active');
+            // Set language cookie/redirect
+            document.cookie = 'django_language=' + lang + ';path=/';
+            window.location.reload();
+        });
+    });
+});
+</script>
 {% endblock %}
