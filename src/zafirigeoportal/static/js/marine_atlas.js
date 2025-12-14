@@ -23,14 +23,18 @@
             all: { center: ol.proj.fromLonLat([39.3, -5.9]), zoom: 9 }
         },
         colors: {
-            island: '#27ae60',
-            islandStroke: '#1e8449',
+            // Islands - OUTLINE ONLY (no fill)
+            islandStroke: '#2c3e50',
+            islandStrokeWidth: 2.5,
+            // MPA
             mpa: 'rgba(26, 95, 122, 0.4)',
             mpaStroke: '#1a5f7a',
+            // Fishing zones
             artisanal: 'rgba(52, 152, 219, 0.35)',
             artisanalStroke: '#3498db',
             deepSea: 'rgba(155, 89, 182, 0.3)',
             deepSeaStroke: '#9b59b6',
+            // Ecosystems
             coral: 'rgba(231, 76, 60, 0.5)',
             coralStroke: '#e74c3c',
             mangrove: 'rgba(39, 174, 96, 0.6)',
@@ -45,17 +49,48 @@
     // ============================================
     let map = null;
     let layers = {};
+    let baseLayers = {};
     let popup = null;
     let currentLang = 'en';
+    let currentBaseLayer = 'ocean';
 
     // ============================================
     // Layer Styles
     // ============================================
     const styles = {
+        // Island borders ONLY - no fill, just outline
         island: new ol.style.Style({
-            fill: new ol.style.Fill({ color: CONFIG.colors.island }),
-            stroke: new ol.style.Stroke({ color: CONFIG.colors.islandStroke, width: 2 })
+            fill: null, // No fill - transparent
+            stroke: new ol.style.Stroke({
+                color: CONFIG.colors.islandStroke,
+                width: CONFIG.colors.islandStrokeWidth,
+                lineCap: 'round',
+                lineJoin: 'round'
+            })
         }),
+        // Island with label
+        islandWithLabel: function(feature) {
+            return [
+                new ol.style.Style({
+                    fill: null,
+                    stroke: new ol.style.Stroke({
+                        color: CONFIG.colors.islandStroke,
+                        width: CONFIG.colors.islandStrokeWidth,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    })
+                }),
+                new ol.style.Style({
+                    text: new ol.style.Text({
+                        text: feature.get('name') || '',
+                        font: 'bold 14px Inter, sans-serif',
+                        fill: new ol.style.Fill({ color: '#2c3e50' }),
+                        stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }),
+                        offsetY: 0
+                    })
+                })
+            ];
+        },
         mpa: new ol.style.Style({
             fill: new ol.style.Fill({ color: CONFIG.colors.mpa }),
             stroke: new ol.style.Stroke({ color: CONFIG.colors.mpaStroke, width: 2, lineDash: [5, 5] })
@@ -110,26 +145,56 @@
     // Map Initialization
     // ============================================
     function initMap() {
-        // Base layer - Ocean styled
-        const oceanLayer = new ol.layer.Tile({
-            source: new ol.source.XYZ({
-                url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
-                attributions: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri'
+        // Base Layers Collection
+        baseLayers = {
+            ocean: new ol.layer.Tile({
+                source: new ol.source.XYZ({
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
+                    attributions: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri'
+                }),
+                visible: true,
+                zIndex: 0,
+                properties: { name: 'ocean', title: 'Ocean Basemap' }
             }),
-            zIndex: 0
-        });
+            satellite: new ol.layer.Tile({
+                source: new ol.source.XYZ({
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attributions: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                }),
+                visible: false,
+                zIndex: 0,
+                properties: { name: 'satellite', title: 'Satellite Imagery' }
+            }),
+            osm: new ol.layer.Tile({
+                source: new ol.source.OSM(),
+                visible: false,
+                zIndex: 0,
+                properties: { name: 'osm', title: 'OpenStreetMap' }
+            }),
+            terrain: new ol.layer.Tile({
+                source: new ol.source.XYZ({
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
+                    attributions: 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, and NPS'
+                }),
+                visible: false,
+                zIndex: 0,
+                properties: { name: 'terrain', title: 'Terrain' }
+            }),
+            dark: new ol.layer.Tile({
+                source: new ol.source.XYZ({
+                    url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+                    attributions: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
+                }),
+                visible: false,
+                zIndex: 0,
+                properties: { name: 'dark', title: 'Dark Mode' }
+            })
+        };
 
-        // Alternative base layer
-        const osmLayer = new ol.layer.Tile({
-            source: new ol.source.OSM(),
-            visible: false,
-            zIndex: 0
-        });
-
-        // Create the map
+        // Create the map with all base layers
         map = new ol.Map({
             target: 'marine-atlas-map',
-            layers: [oceanLayer, osmLayer],
+            layers: Object.values(baseLayers),
             view: new ol.View({
                 center: CONFIG.map.center,
                 zoom: CONFIG.map.zoom,
@@ -151,6 +216,9 @@
         // Setup interactions
         setupMapInteractions();
 
+        // Setup base layer switcher
+        setupBaseLayerSwitcher();
+
         // Hide loading overlay
         setTimeout(() => {
             document.getElementById('loadingOverlay').classList.add('hidden');
@@ -158,15 +226,53 @@
     }
 
     // ============================================
+    // Base Layer Switcher
+    // ============================================
+    function setupBaseLayerSwitcher() {
+        const switcher = document.getElementById('baseLayerSwitcher');
+        if (!switcher) return;
+
+        switcher.querySelectorAll('.base-layer-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const layerName = this.dataset.layer;
+                switchBaseLayer(layerName);
+
+                // Update active state
+                switcher.querySelectorAll('.base-layer-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    }
+
+    function switchBaseLayer(layerName) {
+        // Hide all base layers
+        Object.keys(baseLayers).forEach(key => {
+            baseLayers[key].setVisible(false);
+        });
+
+        // Show selected base layer
+        if (baseLayers[layerName]) {
+            baseLayers[layerName].setVisible(true);
+            currentBaseLayer = layerName;
+        }
+    }
+
+    // ============================================
     // Data Layers Initialization
     // ============================================
     function initDataLayers() {
-        // Islands Layer
+        // Islands Layer - OUTLINE ONLY with labels
         const islandFeatures = [
             geoJsonToFeatures(ZanzibarGeoData.unguja)[0],
             geoJsonToFeatures(ZanzibarGeoData.pemba)[0]
         ];
-        layers.islands = createVectorLayer(islandFeatures, styles.island, 10);
+        layers.islands = new ol.layer.Vector({
+            source: new ol.source.Vector({ features: islandFeatures }),
+            style: styles.islandWithLabel,
+            zIndex: 10
+        });
         map.addLayer(layers.islands);
 
         // Marine Protected Areas

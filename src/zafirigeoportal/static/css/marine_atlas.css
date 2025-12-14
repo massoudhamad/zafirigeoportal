@@ -828,6 +828,107 @@ body.marine-atlas {
 }
 
 /* ============================================
+   Base Layer Switcher
+   ============================================ */
+.base-layer-switcher {
+    position: absolute;
+    bottom: 20px;
+    right: 80px;
+    background: var(--panel-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-heavy);
+    overflow: hidden;
+    z-index: 500;
+}
+
+.base-layer-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--primary-dark);
+    color: var(--text-light);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.base-layer-header i {
+    color: var(--accent-teal);
+    font-size: 12px;
+}
+
+.base-layer-options {
+    display: flex;
+    padding: 10px;
+    gap: 6px;
+}
+
+.base-layer-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.base-layer-option:hover {
+    background: rgba(26, 95, 122, 0.1);
+}
+
+.base-layer-option.active {
+    border-color: var(--accent-teal);
+    background: rgba(23, 162, 184, 0.15);
+}
+
+.layer-preview {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #ddd;
+}
+
+.ocean-preview {
+    background: linear-gradient(135deg, #4a90a4 0%, #2d6b7a 50%, #1a4d5a 100%);
+}
+
+.satellite-preview {
+    background: linear-gradient(135deg, #2d5016 0%, #3d6b1e 50%, #8b4513 100%);
+}
+
+.osm-preview {
+    background: linear-gradient(135deg, #f0ede4 0%, #e8d8b8 50%, #d4c4a4 100%);
+}
+
+.terrain-preview {
+    background: linear-gradient(135deg, #c8b896 0%, #a08060 50%, #d8c8a8 100%);
+}
+
+.dark-preview {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.base-layer-option span {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.base-layer-option.active span {
+    color: var(--primary-medium);
+}
+
+/* ============================================
    Map Controls
    ============================================ */
 .map-controls {

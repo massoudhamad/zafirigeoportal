@@ -272,6 +272,36 @@
                 </nav>
             </aside>
 
+            <!-- Base Layer Switcher -->
+            <div class="base-layer-switcher" id="baseLayerSwitcher">
+                <div class="base-layer-header">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Basemap</span>
+                </div>
+                <div class="base-layer-options">
+                    <button class="base-layer-option active" data-layer="ocean" title="Ocean Basemap">
+                        <div class="layer-preview ocean-preview"></div>
+                        <span>Ocean</span>
+                    </button>
+                    <button class="base-layer-option" data-layer="satellite" title="Satellite Imagery">
+                        <div class="layer-preview satellite-preview"></div>
+                        <span>Satellite</span>
+                    </button>
+                    <button class="base-layer-option" data-layer="osm" title="OpenStreetMap">
+                        <div class="layer-preview osm-preview"></div>
+                        <span>OSM</span>
+                    </button>
+                    <button class="base-layer-option" data-layer="terrain" title="Terrain">
+                        <div class="layer-preview terrain-preview"></div>
+                        <span>Terrain</span>
+                    </button>
+                    <button class="base-layer-option" data-layer="dark" title="Dark Mode">
+                        <div class="layer-preview dark-preview"></div>
+                        <span>Dark</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Map Controls -->
             <div class="map-controls">
                 <button class="map-control-btn" id="zoomIn" data-tooltip="Zoom In">
