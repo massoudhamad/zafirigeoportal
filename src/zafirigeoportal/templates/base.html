@@ -220,6 +220,37 @@
           <i class="fa fa-info-circle"></i>
           <span>{% trans "About" %}</span>
         </a>
+
+        {% if user.is_authenticated %}
+        <!-- Users dropdown -->
+        <div class="zafiri-nav-dropdown">
+          <button class="zafiri-nav-link zafiri-dropdown-toggle">
+            <i class="fa fa-users"></i>
+            <span>{% trans "Users" %}</span>
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <div class="zafiri-nav-dropdown-menu">
+            <a href="{% url 'profile_browse' %}">
+              <i class="fa fa-user"></i> {% trans "People" %}
+            </a>
+            <a href="{% url 'group_list' %}">
+              <i class="fa fa-users"></i> {% trans "Groups" %}
+            </a>
+            {% if user.is_superuser %}
+            <div class="zafiri-dropdown-divider"></div>
+            <a href="{% url 'geonode.invitations:geonode-send-invite' %}">
+              <i class="fa fa-envelope"></i> {% trans "Invite Users" %}
+            </a>
+            <a href="/admin/people/profile/add/">
+              <i class="fa fa-user-plus"></i> {% trans "Add User" %}
+            </a>
+            <a href="{% url 'group_create' %}">
+              <i class="fa fa-plus-circle"></i> {% trans "Create Group" %}
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
       </nav>
 
       <div class="zafiri-header-search">
@@ -231,6 +262,37 @@
 
       <div class="zafiri-header-actions">
         {% if user.is_authenticated %}
+
+        {% if user.is_superuser or user.is_staff %}
+        <!-- Admin dropdown -->
+        <div class="zafiri-admin-menu">
+          <button class="zafiri-admin-btn" id="zafiriAdminBtn">
+            <i class="fa fa-cogs"></i>
+            <span>{% trans "Admin" %}</span>
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <div class="zafiri-admin-dropdown" id="zafiriAdminDropdown">
+            <a href="/admin/">
+              <i class="fa fa-tachometer-alt"></i> {% trans "Admin Panel" %}
+            </a>
+            <a href="/geoserver/">
+              <i class="fa fa-server"></i> {% trans "GeoServer" %}
+            </a>
+            <a href="/monitoring/">
+              <i class="fa fa-chart-line"></i> {% trans "Monitoring" %}
+            </a>
+            <div class="zafiri-dropdown-divider"></div>
+            <a href="{% url 'services' %}">
+              <i class="fa fa-plug"></i> {% trans "Remote Services" %}
+            </a>
+            <a href="{% url 'register_service' %}">
+              <i class="fa fa-plus"></i> {% trans "Add Service" %}
+            </a>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- User menu -->
         <div class="zafiri-user-menu">
           <button class="zafiri-user-btn" id="zafiriUserBtn">
             <i class="fa fa-user-circle"></i>
@@ -244,12 +306,12 @@
             <a href="/catalogue/#/search/?owner={{ user.username }}">
               <i class="fa fa-folder"></i> {% trans "My Resources" %}
             </a>
-            {% if user.is_superuser or user.is_staff %}
-            <div class="zafiri-dropdown-divider"></div>
-            <a href="{% url "admin:index" %}">
-              <i class="fa fa-cog"></i> {% trans "Admin" %}
+            <a href="{% url 'recent-activity' %}">
+              <i class="fa fa-history"></i> {% trans "Recent Activity" %}
             </a>
-            {% endif %}
+            <a href="{% url 'messages_inbox' %}">
+              <i class="fa fa-inbox"></i> {% trans "Inbox" %}
+            </a>
             <div class="zafiri-dropdown-divider"></div>
             <a href="{% url "account_logout" %}">
               <i class="fa fa-sign-out-alt"></i> {% trans "Logout" %}
@@ -563,6 +625,134 @@
         height: 1px;
         background: rgba(255, 255, 255, 0.1);
         margin: 6px 0;
+      }
+
+      /* Admin Menu */
+      .zafiri-admin-menu {
+        position: relative;
+      }
+
+      .zafiri-admin-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        background: rgba(23, 162, 184, 0.3);
+        border: none;
+        border-radius: 25px;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .zafiri-admin-btn:hover {
+        background: rgba(23, 162, 184, 0.5);
+      }
+
+      .zafiri-admin-btn i.fa-angle-down {
+        font-size: 12px;
+        margin-left: 4px;
+      }
+
+      .zafiri-admin-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        background: #0d3d4d;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        min-width: 220px;
+        padding: 8px;
+        display: none;
+        z-index: 10001;
+      }
+
+      .zafiri-admin-menu:hover .zafiri-admin-dropdown,
+      .zafiri-admin-dropdown.show {
+        display: block;
+      }
+
+      .zafiri-admin-dropdown a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        color: rgba(255, 255, 255, 0.85) !important;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .zafiri-admin-dropdown a:hover {
+        background: rgba(23, 162, 184, 0.3);
+        color: #ffffff !important;
+      }
+
+      .zafiri-admin-dropdown a i {
+        width: 18px;
+        text-align: center;
+        color: #17a2b8;
+      }
+
+      /* Nav Dropdown (Users menu) */
+      .zafiri-nav-dropdown {
+        position: relative;
+      }
+
+      .zafiri-dropdown-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      .zafiri-dropdown-toggle i.fa-angle-down {
+        font-size: 10px;
+        margin-left: 4px;
+      }
+
+      .zafiri-nav-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 8px;
+        background: #0d3d4d;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        min-width: 200px;
+        padding: 8px;
+        display: none;
+        z-index: 10001;
+      }
+
+      .zafiri-nav-dropdown:hover .zafiri-nav-dropdown-menu {
+        display: block;
+      }
+
+      .zafiri-nav-dropdown-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        color: rgba(255, 255, 255, 0.85) !important;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .zafiri-nav-dropdown-menu a:hover {
+        background: rgba(23, 162, 184, 0.3);
+        color: #ffffff !important;
+      }
+
+      .zafiri-nav-dropdown-menu a i {
+        width: 18px;
+        text-align: center;
+        color: #17a2b8;
       }
 
       /* Responsive */
