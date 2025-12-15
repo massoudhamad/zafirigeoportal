@@ -767,7 +767,7 @@
         }
 
         html += '<div class="dropdown-divider"></div>';
-        html += '<a href="/account/logout/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>';
+        html += '<a href="/account/logout/?next=/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>';
         html += '</div></div>';
 
         container.innerHTML = html;
