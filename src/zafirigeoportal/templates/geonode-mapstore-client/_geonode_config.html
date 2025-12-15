@@ -23,88 +23,9 @@
 </script>
 {% endblock %}
 
-{% block body %}
-<!-- ZAFIRI Navbar - Injected before body content -->
-<header class="zafiri-navbar" id="zafiri-navbar">
-    <a href="/" class="zn-brand">
-        <div class="zn-logo">
-            <img src="{% static 'img/zafiri_logo.svg' %}" alt="ZAFIRI">
-        </div>
-        <div class="zn-title">
-            <span class="zn-title-main">ZAFIRI</span>
-            <span class="zn-title-sub">Marine Atlas</span>
-        </div>
-    </a>
-
-    <nav class="zn-nav">
-        <a href="/"><i class="fa fa-home"></i><span>Home</span></a>
-        <a href="/catalogue/#/search/?f=dataset"><i class="fa fa-database"></i><span>Data</span></a>
-        <a href="/catalogue/#/search/?f=map"><i class="fa fa-map"></i><span>Maps</span></a>
-        <a href="/catalogue/#/search/?f=document"><i class="fa fa-file-alt"></i><span>Docs</span></a>
-        <a href="/about/"><i class="fa fa-info-circle"></i><span>About</span></a>
-        <div class="zn-dropdown" id="zn-users-dropdown" style="display: none;">
-            <button class="zn-nav-btn"><i class="fa fa-users"></i><span>Users</span><i class="fa fa-angle-down"></i></button>
-            <div class="zn-dropdown-menu zn-dropdown-left">
-                <a href="/people/"><i class="fa fa-user"></i>People</a>
-                <a href="/groups/"><i class="fa fa-users"></i>Groups</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="zn-search">
-        <i class="fa fa-search"></i>
-        <input type="text" placeholder="Search datasets, maps..." id="zn-search-input">
-    </div>
-
-    <div class="zn-actions">
-        <!-- Admin Menu -->
-        <div class="zn-dropdown" id="zn-admin-menu" style="display: none;">
-            <button class="zn-dropdown-btn zn-admin-btn"><i class="fa fa-cogs"></i><span>Admin</span><i class="fa fa-angle-down"></i></button>
-            <div class="zn-dropdown-menu">
-                <a href="/admin/"><i class="fa fa-tachometer-alt"></i>Admin Panel</a>
-                <a href="/geoserver/"><i class="fa fa-server"></i>GeoServer</a>
-                <a href="/monitoring/"><i class="fa fa-chart-line"></i>Monitoring</a>
-                <div class="zn-divider"></div>
-                <a href="/people/"><i class="fa fa-users"></i>Users</a>
-                <a href="/groups/"><i class="fa fa-user-friends"></i>Groups</a>
-            </div>
-        </div>
-
-        <!-- User Menu -->
-        <div class="zn-dropdown" id="zn-user-menu" style="display: none;">
-            <button class="zn-dropdown-btn"><i class="fa fa-user-circle"></i><span id="zn-username">User</span><i class="fa fa-angle-down"></i></button>
-            <div class="zn-dropdown-menu">
-                <a href="/people/profile/" id="zn-profile-link"><i class="fa fa-user"></i>Profile</a>
-                <a href="/catalogue/#/search/?owner=" id="zn-resources-link"><i class="fa fa-folder"></i>My Resources</a>
-                <a href="/messages/inbox/"><i class="fa fa-inbox"></i>Inbox</a>
-                <div class="zn-divider"></div>
-                <a href="/account/logout/"><i class="fa fa-sign-out-alt"></i>Logout</a>
-            </div>
-        </div>
-
-        <!-- Auth Buttons -->
-        <div id="zn-auth-buttons">
-            <a href="/account/signup/" class="zn-btn-register">Register</a>
-            <a href="/account/login/" class="zn-btn-login">Login</a>
-        </div>
-
-        <!-- Language -->
-        <div class="zn-lang">
-            <span class="active" data-lang="en">EN</span>
-            <span class="zn-lang-sep">/</span>
-            <span data-lang="sw">SW</span>
-        </div>
-    </div>
-</header>
-
-{{ block.super }}
-{% endblock %}
-
 {% block extra_style %}
 <style>
-/* ===========================================
-   HIDE GEONODE DEFAULT NAVBAR
-   =========================================== */
+/* Hide GeoNode default navbar */
 .gn-brand-navbar,
 nav.gn-menu,
 .gn-main-header,
@@ -114,27 +35,18 @@ header.gn-main-header,
 .gn-menu-content,
 .gn-brand-navbar-container {
     display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    overflow: hidden !important;
 }
 
-/* ===========================================
-   BODY AND LAYOUT
-   =========================================== */
 html, body {
     padding-top: 64px !important;
-    margin-top: 0 !important;
 }
 
 #gn-app {
     min-height: calc(100vh - 64px) !important;
 }
 
-/* ===========================================
-   ZAFIRI NAVBAR
-   =========================================== */
-.zafiri-navbar {
+/* ZAFIRI Navbar */
+#zafiri-navbar {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -146,15 +58,12 @@ html, body {
     justify-content: space-between !important;
     padding: 0 20px !important;
     z-index: 999999 !important;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2) !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
-.zafiri-navbar * {
-    box-sizing: border-box !important;
-}
+#zafiri-navbar * { box-sizing: border-box !important; }
 
-/* Brand */
 .zn-brand {
     display: flex !important;
     align-items: center !important;
@@ -197,15 +106,18 @@ html, body {
     text-transform: uppercase !important;
 }
 
-/* Navigation */
 .zn-nav {
     display: flex !important;
     align-items: center !important;
     gap: 4px !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-.zn-nav > a,
-.zn-nav-btn {
+.zn-nav li { list-style: none !important; }
+
+.zn-nav a, .zn-nav-btn {
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
@@ -218,16 +130,13 @@ html, body {
     background: none !important;
     border: none !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
 }
 
-.zn-nav > a:hover,
-.zn-nav-btn:hover {
+.zn-nav a:hover, .zn-nav-btn:hover {
     color: #fff !important;
     background: rgba(255,255,255,0.15) !important;
 }
 
-/* Search */
 .zn-search {
     flex: 1 !important;
     max-width: 300px !important;
@@ -247,13 +156,8 @@ html, body {
     outline: none !important;
 }
 
-.zn-search input::placeholder {
-    color: rgba(255,255,255,0.6) !important;
-}
-
-.zn-search input:focus {
-    background: rgba(255,255,255,0.25) !important;
-}
+.zn-search input::placeholder { color: rgba(255,255,255,0.6) !important; }
+.zn-search input:focus { background: rgba(255,255,255,0.25) !important; }
 
 .zn-search > i {
     position: absolute !important;
@@ -263,7 +167,6 @@ html, body {
     color: rgba(255,255,255,0.6) !important;
 }
 
-/* Actions */
 .zn-actions {
     display: flex !important;
     align-items: center !important;
@@ -282,7 +185,6 @@ html, body {
 
 .zn-btn-register:hover {
     background: rgba(255,255,255,0.1) !important;
-    border-color: #fff !important;
     color: #fff !important;
 }
 
@@ -302,10 +204,7 @@ html, body {
     color: #0d3d4d !important;
 }
 
-/* Dropdowns */
-.zn-dropdown {
-    position: relative !important;
-}
+.zn-dropdown { position: relative !important; }
 
 .zn-dropdown-btn {
     display: flex !important;
@@ -320,13 +219,8 @@ html, body {
     cursor: pointer !important;
 }
 
-.zn-dropdown-btn:hover {
-    background: rgba(255,255,255,0.2) !important;
-}
-
-.zn-admin-btn {
-    background: rgba(23,162,184,0.3) !important;
-}
+.zn-dropdown-btn:hover { background: rgba(255,255,255,0.2) !important; }
+.zn-admin-btn { background: rgba(23,162,184,0.3) !important; }
 
 .zn-dropdown-menu {
     position: absolute !important;
@@ -342,14 +236,8 @@ html, body {
     z-index: 1000000 !important;
 }
 
-.zn-dropdown-left {
-    left: 0 !important;
-    right: auto !important;
-}
-
-.zn-dropdown:hover .zn-dropdown-menu {
-    display: block !important;
-}
+.zn-dropdown-left { left: 0 !important; right: auto !important; }
+.zn-dropdown:hover .zn-dropdown-menu { display: block !important; }
 
 .zn-dropdown-menu a {
     display: flex !important;
@@ -379,7 +267,6 @@ html, body {
     margin: 6px 0 !important;
 }
 
-/* Language */
 .zn-lang {
     display: flex !important;
     align-items: center !important;
@@ -396,27 +283,14 @@ html, body {
     cursor: pointer !important;
 }
 
-.zn-lang span:hover,
-.zn-lang span.active {
-    color: #fff !important;
-}
+.zn-lang span:hover, .zn-lang span.active { color: #fff !important; }
+.zn-lang-sep { cursor: default !important; }
 
-.zn-lang-sep {
-    color: rgba(255,255,255,0.3) !important;
-    cursor: default !important;
-}
-
-/* Responsive */
-@media (max-width: 1100px) {
-    .zn-search { max-width: 200px !important; }
-}
-
+@media (max-width: 1100px) { .zn-search { max-width: 200px !important; } }
 @media (max-width: 900px) {
     .zn-search { display: none !important; }
-    .zn-nav > a span,
-    .zn-nav-btn span { display: none !important; }
+    .zn-nav a span, .zn-nav-btn span { display: none !important; }
 }
-
 @media (max-width: 700px) {
     .zn-btn-register { display: none !important; }
     .zn-title-sub { display: none !important; }
@@ -428,63 +302,79 @@ html, body {
 {% block extra_script %}
 <script>
 (function() {
-    // Get user info from GeoNode config
-    var config = window.__GEONODE_CONFIG__ || {};
-    var user = config.user || {};
-    var isAuth = user && user.pk;
-    var username = isAuth ? (user.username || 'User') : null;
-    var isAdmin = isAuth && (user.is_superuser || user.is_staff);
+    var LOGO_URL = '{% static "img/zafiri_logo.svg" %}';
 
-    function initNavbar() {
-        // Auth state
-        var authButtons = document.getElementById('zn-auth-buttons');
-        var userMenu = document.getElementById('zn-user-menu');
-        var adminMenu = document.getElementById('zn-admin-menu');
-        var usersDropdown = document.getElementById('zn-users-dropdown');
+    function createNavbar() {
+        if (document.getElementById('zafiri-navbar')) return;
 
-        if (isAuth) {
-            if (authButtons) authButtons.style.display = 'none';
-            if (userMenu) userMenu.style.display = 'block';
-            if (usersDropdown) usersDropdown.style.display = 'block';
+        var config = window.__GEONODE_CONFIG__ || {};
+        var user = config.user || {};
+        var isAuth = user && user.pk;
+        var username = isAuth ? (user.username || 'User') : null;
+        var isAdmin = isAuth && (user.is_superuser || user.is_staff);
 
-            var usernameSpan = document.getElementById('zn-username');
-            if (usernameSpan) usernameSpan.textContent = username;
+        var nav = document.createElement('nav');
+        nav.id = 'zafiri-navbar';
 
-            var profileLink = document.getElementById('zn-profile-link');
-            if (profileLink) profileLink.href = '/people/profile/' + username + '/';
+        var html = '<a href="/" class="zn-brand">' +
+            '<div class="zn-logo"><img src="' + LOGO_URL + '" alt="ZAFIRI"></div>' +
+            '<div class="zn-title"><span class="zn-title-main">ZAFIRI</span><span class="zn-title-sub">Marine Atlas</span></div></a>' +
+            '<ul class="zn-nav">' +
+            '<li><a href="/"><i class="fa fa-home"></i><span>Home</span></a></li>' +
+            '<li><a href="/catalogue/#/search/?f=dataset"><i class="fa fa-database"></i><span>Data</span></a></li>' +
+            '<li><a href="/catalogue/#/search/?f=map"><i class="fa fa-map"></i><span>Maps</span></a></li>' +
+            '<li><a href="/catalogue/#/search/?f=document"><i class="fa fa-file-alt"></i><span>Docs</span></a></li>' +
+            '<li><a href="/about/"><i class="fa fa-info-circle"></i><span>About</span></a></li>' +
+            '</ul>' +
+            '<div class="zn-search"><i class="fa fa-search"></i><input type="text" placeholder="Search..." id="zn-search"></div>' +
+            '<div class="zn-actions">';
 
-            var resourcesLink = document.getElementById('zn-resources-link');
-            if (resourcesLink) resourcesLink.href = '/catalogue/#/search/?owner=' + username;
-
-            if (isAdmin && adminMenu) {
-                adminMenu.style.display = 'block';
-            }
+        if (isAdmin) {
+            html += '<div class="zn-dropdown"><button class="zn-dropdown-btn zn-admin-btn"><i class="fa fa-cogs"></i><span>Admin</span><i class="fa fa-angle-down"></i></button>' +
+                '<div class="zn-dropdown-menu"><a href="/admin/"><i class="fa fa-tachometer-alt"></i>Admin</a>' +
+                '<a href="/geoserver/"><i class="fa fa-server"></i>GeoServer</a>' +
+                '<a href="/monitoring/"><i class="fa fa-chart-line"></i>Monitoring</a></div></div>';
         }
 
-        // Search
-        var searchInput = document.getElementById('zn-search-input');
-        if (searchInput) {
-            searchInput.addEventListener('keypress', function(e) {
+        if (isAuth) {
+            html += '<div class="zn-dropdown"><button class="zn-dropdown-btn"><i class="fa fa-user-circle"></i><span>' + username + '</span><i class="fa fa-angle-down"></i></button>' +
+                '<div class="zn-dropdown-menu"><a href="/people/profile/' + username + '/"><i class="fa fa-user"></i>Profile</a>' +
+                '<a href="/catalogue/#/search/?owner=' + username + '"><i class="fa fa-folder"></i>My Resources</a>' +
+                '<div class="zn-divider"></div><a href="/account/logout/"><i class="fa fa-sign-out-alt"></i>Logout</a></div></div>';
+        } else {
+            html += '<a href="/account/signup/" class="zn-btn-register">Register</a>' +
+                '<a href="/account/login/" class="zn-btn-login">Login</a>';
+        }
+
+        html += '<div class="zn-lang"><span class="active" data-lang="en">EN</span><span class="zn-lang-sep">/</span><span data-lang="sw">SW</span></div></div>';
+
+        nav.innerHTML = html;
+        document.body.insertBefore(nav, document.body.firstChild);
+
+        var search = document.getElementById('zn-search');
+        if (search) {
+            search.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && this.value.trim()) {
                     window.location.href = '/catalogue/#/search/?q=' + encodeURIComponent(this.value.trim());
                 }
             });
         }
 
-        // Language toggle
-        document.querySelectorAll('.zn-lang span[data-lang]').forEach(function(opt) {
-            opt.addEventListener('click', function() {
+        nav.querySelectorAll('.zn-lang span[data-lang]').forEach(function(el) {
+            el.addEventListener('click', function() {
                 document.cookie = 'django_language=' + this.dataset.lang + ';path=/';
-                window.location.reload();
+                location.reload();
             });
         });
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initNavbar);
+        document.addEventListener('DOMContentLoaded', createNavbar);
     } else {
-        initNavbar();
+        createNavbar();
     }
+    setTimeout(createNavbar, 100);
+    setTimeout(createNavbar, 500);
 })();
 </script>
 {% endblock %}
