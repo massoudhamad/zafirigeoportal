@@ -1262,7 +1262,8 @@ body.marine-atlas {
     z-index: 1001;
 }
 
-.header-dropdown:hover .dropdown-menu {
+.header-dropdown:hover .dropdown-menu,
+.dropdown-menu.show {
     display: block;
 }
 

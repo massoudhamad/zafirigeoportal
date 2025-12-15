@@ -716,16 +716,23 @@
         const userContainer = document.getElementById('headerUser');
         if (!userContainer) return;
 
-        // Fetch user info from GeoNode API
-        fetch('/api/v2/users/info/')
+        // Fetch user info from GeoNode API with credentials
+        fetch('/api/v2/users/info/', {
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
             .then(response => {
                 if (!response.ok) throw new Error('Not authenticated');
                 return response.json();
             })
             .then(data => {
-                if (data && data.user) {
-                    renderAuthenticatedUser(userContainer, data.user);
-                    updateWorkspaceLinks(data.user.username);
+                // Handle both response formats
+                const user = data.user || data;
+                if (user && (user.pk || user.username)) {
+                    renderAuthenticatedUser(userContainer, user);
+                    updateWorkspaceLinks(user.username);
                 } else {
                     renderGuestUser(userContainer);
                 }
@@ -737,18 +744,19 @@
 
     function renderAuthenticatedUser(container, user) {
         const isAdmin = user.is_superuser || user.is_staff;
-        const initials = user.username.substring(0, 2).toUpperCase();
+        const username = user.username || 'User';
+        const initials = username.substring(0, 2).toUpperCase();
 
-        let html = '<div class="header-dropdown user-dropdown">';
-        html += '<button class="dropdown-trigger user-trigger">';
+        let html = '<div class="header-dropdown user-dropdown" id="userDropdownContainer">';
+        html += '<button class="dropdown-trigger user-trigger" id="userDropdownBtn">';
         html += '<div class="user-avatar">' + initials + '</div>';
-        html += '<span>' + user.username + '</span>';
+        html += '<span>' + username + '</span>';
         if (isAdmin) html += '<span class="admin-badge"><i class="fas fa-shield-alt"></i></span>';
         html += '<i class="fas fa-chevron-down"></i>';
         html += '</button>';
-        html += '<div class="dropdown-menu">';
-        html += '<a href="/people/profile/' + user.username + '/" class="dropdown-item"><i class="fas fa-user"></i><span>Profile</span></a>';
-        html += '<a href="/catalogue/#/search/?owner=' + user.username + '" class="dropdown-item"><i class="fas fa-folder"></i><span>My Resources</span></a>';
+        html += '<div class="dropdown-menu" id="userDropdownMenu">';
+        html += '<a href="/people/profile/' + username + '/" class="dropdown-item"><i class="fas fa-user"></i><span>Profile</span></a>';
+        html += '<a href="/catalogue/#/search/?owner=' + username + '" class="dropdown-item"><i class="fas fa-folder"></i><span>My Resources</span></a>';
         html += '<a href="/messages/" class="dropdown-item"><i class="fas fa-envelope"></i><span>Messages</span></a>';
 
         if (isAdmin) {
@@ -763,6 +771,9 @@
         html += '</div></div>';
 
         container.innerHTML = html;
+
+        // Setup dropdown click behavior after rendering
+        setupDropdownBehavior();
     }
 
     function renderGuestUser(container) {
@@ -781,6 +792,46 @@
         if (workspaceTool) {
             workspaceTool.href = '/catalogue/#/search/?owner=' + username;
         }
+    }
+
+    // ============================================
+    // Dropdown Menu Behavior
+    // ============================================
+    function setupDropdownBehavior() {
+        // User dropdown click toggle
+        const userBtn = document.getElementById('userDropdownBtn');
+        const userMenu = document.getElementById('userDropdownMenu');
+
+        if (userBtn && userMenu) {
+            userBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userMenu.classList.toggle('show');
+            });
+        }
+
+        // Tools dropdown click toggle
+        const toolsDropdown = document.getElementById('toolsDropdown');
+        if (toolsDropdown) {
+            const toolsBtn = toolsDropdown.querySelector('.dropdown-trigger');
+            const toolsMenu = toolsDropdown.querySelector('.dropdown-menu');
+
+            if (toolsBtn && toolsMenu) {
+                toolsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toolsMenu.classList.toggle('show');
+                });
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdowns = document.querySelectorAll('.dropdown-menu.show');
+            dropdowns.forEach(function(dropdown) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        });
     }
 
     // ============================================
@@ -887,6 +938,7 @@
         setupDashboard();
         setupUserMenu();
         setupToolsPanel();
+        setupDropdownBehavior(); // Setup initial dropdowns (tools dropdown)
 
         console.log('ZAFIRI Marine Atlas initialized successfully');
     }

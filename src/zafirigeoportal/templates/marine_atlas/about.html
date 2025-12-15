@@ -236,12 +236,16 @@
         </div>
 
         <div class="header-actions">
+            <!-- User Section - populated by JavaScript -->
+            <div class="header-user" id="headerUser">
+                <!-- Will be populated by JavaScript based on auth state -->
+            </div>
+
             <div class="lang-toggle" id="langToggle">
                 <span class="lang-option active" data-lang="en">EN</span>
                 <span class="lang-separator">/</span>
                 <span class="lang-option" data-lang="sw">SW</span>
             </div>
-            <a href="/account/login/" class="btn-login">Login</a>
         </div>
     </header>
 
@@ -338,5 +342,113 @@
             </a>
         </div>
     </div>
+
+    <script>
+    // User Authentication for About Page
+    (function() {
+        function setupUserMenu() {
+            var userContainer = document.getElementById('headerUser');
+            if (!userContainer) return;
+
+            fetch('/api/v2/users/info/', {
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(function(response) {
+                if (!response.ok) throw new Error('Not authenticated');
+                return response.json();
+            })
+            .then(function(data) {
+                var user = data.user || data;
+                if (user && (user.pk || user.username)) {
+                    renderAuthenticatedUser(userContainer, user);
+                } else {
+                    renderGuestUser(userContainer);
+                }
+            })
+            .catch(function() {
+                renderGuestUser(userContainer);
+            });
+        }
+
+        function renderAuthenticatedUser(container, user) {
+            var isAdmin = user.is_superuser || user.is_staff;
+            var username = user.username || 'User';
+            var initials = username.substring(0, 2).toUpperCase();
+
+            var html = '<div class="header-dropdown user-dropdown" id="userDropdownContainer">';
+            html += '<button class="dropdown-trigger user-trigger" id="userDropdownBtn">';
+            html += '<div class="user-avatar">' + initials + '</div>';
+            html += '<span>' + username + '</span>';
+            if (isAdmin) html += '<span class="admin-badge"><i class="fas fa-shield-alt"></i></span>';
+            html += '<i class="fas fa-chevron-down"></i>';
+            html += '</button>';
+            html += '<div class="dropdown-menu" id="userDropdownMenu">';
+            html += '<a href="/people/profile/' + username + '/" class="dropdown-item"><i class="fas fa-user"></i><span>Profile</span></a>';
+            html += '<a href="/catalogue/#/search/?owner=' + username + '" class="dropdown-item"><i class="fas fa-folder"></i><span>My Resources</span></a>';
+            html += '<a href="/messages/" class="dropdown-item"><i class="fas fa-envelope"></i><span>Messages</span></a>';
+
+            if (isAdmin) {
+                html += '<div class="dropdown-divider"></div>';
+                html += '<a href="/admin/" class="dropdown-item"><i class="fas fa-cog"></i><span>Admin Panel</span></a>';
+                html += '<a href="/geoserver/" class="dropdown-item"><i class="fas fa-server"></i><span>GeoServer</span></a>';
+                html += '<a href="/monitoring/" class="dropdown-item"><i class="fas fa-chart-line"></i><span>Monitoring</span></a>';
+            }
+
+            html += '<div class="dropdown-divider"></div>';
+            html += '<a href="/account/logout/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>';
+            html += '</div></div>';
+
+            container.innerHTML = html;
+            setupDropdownBehavior();
+        }
+
+        function renderGuestUser(container) {
+            var html = '<a href="/account/signup/" class="btn-register">Register</a>';
+            html += '<a href="/account/login/" class="btn-login">Login</a>';
+            container.innerHTML = html;
+        }
+
+        function setupDropdownBehavior() {
+            var userBtn = document.getElementById('userDropdownBtn');
+            var userMenu = document.getElementById('userDropdownMenu');
+
+            if (userBtn && userMenu) {
+                userBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenu.classList.toggle('show');
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                var dropdowns = document.querySelectorAll('.dropdown-menu.show');
+                dropdowns.forEach(function(dropdown) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            });
+        }
+
+        // Language toggle
+        var langOptions = document.querySelectorAll('.lang-option');
+        langOptions.forEach(function(option) {
+            option.addEventListener('click', function() {
+                var lang = this.dataset.lang;
+                langOptions.forEach(function(opt) { opt.classList.remove('active'); });
+                this.classList.add('active');
+                document.cookie = 'django_language=' + lang + ';path=/';
+                window.location.reload();
+            });
+        });
+
+        // Init
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupUserMenu);
+        } else {
+            setupUserMenu();
+        }
+    })();
+    </script>
 </body>
 </html>
