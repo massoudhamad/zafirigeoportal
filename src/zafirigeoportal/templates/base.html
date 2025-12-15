@@ -238,7 +238,7 @@
             </a>
             {% if user.is_superuser %}
             <div class="zafiri-dropdown-divider"></div>
-            <a href="{% url 'geonode.invitations:geonode-send-invite' %}">
+            <a href="/invitations/geonode-send-invite/">
               <i class="fa fa-envelope"></i> {% trans "Invite Users" %}
             </a>
             <a href="/admin/people/profile/add/">
@@ -306,7 +306,7 @@
             <a href="/catalogue/#/search/?owner={{ user.username }}">
               <i class="fa fa-folder"></i> {% trans "My Resources" %}
             </a>
-            <a href="{% url 'recent-activity' %}">
+            <a href="/actstream/actor/{{ user.username }}/">
               <i class="fa fa-history"></i> {% trans "Recent Activity" %}
             </a>
             <a href="{% url 'messages_inbox' %}">
