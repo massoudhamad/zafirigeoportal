@@ -710,6 +710,171 @@
     }
 
     // ============================================
+    // User Authentication & Menu
+    // ============================================
+    function setupUserMenu() {
+        const userContainer = document.getElementById('headerUser');
+        if (!userContainer) return;
+
+        // Fetch user info from GeoNode API
+        fetch('/api/v2/users/info/')
+            .then(response => {
+                if (!response.ok) throw new Error('Not authenticated');
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.user) {
+                    renderAuthenticatedUser(userContainer, data.user);
+                    updateWorkspaceLinks(data.user.username);
+                } else {
+                    renderGuestUser(userContainer);
+                }
+            })
+            .catch(() => {
+                renderGuestUser(userContainer);
+            });
+    }
+
+    function renderAuthenticatedUser(container, user) {
+        const isAdmin = user.is_superuser || user.is_staff;
+        const initials = user.username.substring(0, 2).toUpperCase();
+
+        let html = '<div class="header-dropdown user-dropdown">';
+        html += '<button class="dropdown-trigger user-trigger">';
+        html += '<div class="user-avatar">' + initials + '</div>';
+        html += '<span>' + user.username + '</span>';
+        if (isAdmin) html += '<span class="admin-badge"><i class="fas fa-shield-alt"></i></span>';
+        html += '<i class="fas fa-chevron-down"></i>';
+        html += '</button>';
+        html += '<div class="dropdown-menu">';
+        html += '<a href="/people/profile/' + user.username + '/" class="dropdown-item"><i class="fas fa-user"></i><span>Profile</span></a>';
+        html += '<a href="/catalogue/#/search/?owner=' + user.username + '" class="dropdown-item"><i class="fas fa-folder"></i><span>My Resources</span></a>';
+        html += '<a href="/messages/" class="dropdown-item"><i class="fas fa-envelope"></i><span>Messages</span></a>';
+
+        if (isAdmin) {
+            html += '<div class="dropdown-divider"></div>';
+            html += '<a href="/admin/" class="dropdown-item"><i class="fas fa-cog"></i><span>Admin Panel</span></a>';
+            html += '<a href="/geoserver/" class="dropdown-item"><i class="fas fa-server"></i><span>GeoServer</span></a>';
+            html += '<a href="/monitoring/" class="dropdown-item"><i class="fas fa-chart-line"></i><span>Monitoring</span></a>';
+        }
+
+        html += '<div class="dropdown-divider"></div>';
+        html += '<a href="/account/logout/" class="dropdown-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>';
+        html += '</div></div>';
+
+        container.innerHTML = html;
+    }
+
+    function renderGuestUser(container) {
+        let html = '<a href="/account/signup/" class="btn-register">Register</a>';
+        html += '<a href="/account/login/" class="btn-login">Login</a>';
+        container.innerHTML = html;
+    }
+
+    function updateWorkspaceLinks(username) {
+        // Update workspace links with the actual username
+        const workspaceLink = document.getElementById('myWorkspaceLink');
+        if (workspaceLink) {
+            workspaceLink.href = '/catalogue/#/search/?owner=' + username;
+        }
+        const workspaceTool = document.getElementById('workspaceTool');
+        if (workspaceTool) {
+            workspaceTool.href = '/catalogue/#/search/?owner=' + username;
+        }
+    }
+
+    // ============================================
+    // Tools Panel
+    // ============================================
+    function setupToolsPanel() {
+        const analysisBtn = document.getElementById('analysisToolsBtn');
+        const toolsPanel = document.getElementById('toolsPanel');
+        const closeBtn = document.getElementById('closeToolsPanel');
+        const toggleBtn = document.getElementById('toggleToolsPanel');
+
+        if (analysisBtn && toolsPanel) {
+            analysisBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                toolsPanel.classList.toggle('visible');
+            });
+        }
+
+        if (toggleBtn && toolsPanel) {
+            toggleBtn.addEventListener('click', function() {
+                toolsPanel.classList.toggle('visible');
+                this.classList.toggle('active');
+            });
+        }
+
+        if (closeBtn && toolsPanel) {
+            closeBtn.addEventListener('click', function() {
+                toolsPanel.classList.remove('visible');
+                if (toggleBtn) toggleBtn.classList.remove('active');
+            });
+        }
+
+        // Setup individual tools
+        setupMeasureTool();
+        setupExportTool();
+        setupPrintTool();
+    }
+
+    function setupMeasureTool() {
+        const measureBtn = document.getElementById('measureTool');
+        if (!measureBtn) return;
+
+        measureBtn.addEventListener('click', function() {
+            alert('Measure Tool: Coming soon! This will allow you to measure distances and areas on the map.');
+        });
+    }
+
+    function setupExportTool() {
+        const exportBtn = document.getElementById('exportTool');
+        if (!exportBtn) return;
+
+        exportBtn.addEventListener('click', function() {
+            // Export map as PNG
+            map.once('rendercomplete', function() {
+                const mapCanvas = document.createElement('canvas');
+                const size = map.getSize();
+                mapCanvas.width = size[0];
+                mapCanvas.height = size[1];
+                const mapContext = mapCanvas.getContext('2d');
+
+                Array.prototype.forEach.call(
+                    map.getViewport().querySelectorAll('.ol-layer canvas, canvas.ol-layer'),
+                    function(canvas) {
+                        if (canvas.width > 0) {
+                            const opacity = canvas.parentNode.style.opacity || canvas.style.opacity;
+                            mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                            const transform = canvas.style.transform;
+                            const matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(',').map(Number);
+                            CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                            mapContext.drawImage(canvas, 0, 0);
+                        }
+                    }
+                );
+
+                mapContext.globalAlpha = 1;
+                const link = document.createElement('a');
+                link.download = 'zafiri-marine-atlas-' + new Date().toISOString().split('T')[0] + '.png';
+                link.href = mapCanvas.toDataURL();
+                link.click();
+            });
+            map.renderSync();
+        });
+    }
+
+    function setupPrintTool() {
+        const printBtn = document.getElementById('printTool');
+        if (!printBtn) return;
+
+        printBtn.addEventListener('click', function() {
+            window.print();
+        });
+    }
+
+    // ============================================
     // Initialize Application
     // ============================================
     function init() {
@@ -720,6 +885,8 @@
         setupSearch();
         setupLanguageToggle();
         setupDashboard();
+        setupUserMenu();
+        setupToolsPanel();
 
         console.log('ZAFIRI Marine Atlas initialized successfully');
     }

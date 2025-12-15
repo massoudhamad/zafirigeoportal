@@ -384,6 +384,18 @@ body.marine-atlas {
     color: var(--accent-teal);
 }
 
+.layer-group[data-group="fisheries"] .layer-group-icon {
+    color: #3498db;
+}
+
+.layer-group[data-group="ecosystems"] .layer-group-icon {
+    color: #27ae60;
+}
+
+.layer-group[data-group="oceanography"] .layer-group-icon {
+    color: #f39c12;
+}
+
 .layer-group-toggle {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.5);
@@ -982,6 +994,17 @@ body.marine-atlas {
     color: var(--text-light);
 }
 
+.map-control-btn.active,
+.map-control-btn.tools-btn.active {
+    background: var(--accent-teal);
+    color: var(--text-light);
+}
+
+.map-control-btn.tools-btn {
+    background: var(--primary-dark);
+    color: var(--accent-teal);
+}
+
 /* ============================================
    Loading State
    ============================================ */
@@ -1189,4 +1212,417 @@ body.marine-atlas {
     font-size: 12px;
     font-weight: 500;
     color: var(--text-dark);
+}
+
+/* ============================================
+   Header Dropdowns & User Menu
+   ============================================ */
+.header-dropdown {
+    position: relative;
+}
+
+.dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 20px;
+    color: var(--text-light);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.dropdown-trigger:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tools-trigger {
+    background: rgba(23, 162, 184, 0.3);
+}
+
+.tools-trigger:hover {
+    background: rgba(23, 162, 184, 0.5);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    min-width: 200px;
+    background: var(--primary-dark);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-heavy);
+    padding: 8px;
+    display: none;
+    z-index: 1001;
+}
+
+.header-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: var(--transition-fast);
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-item:hover {
+    background: rgba(23, 162, 184, 0.3);
+    color: var(--text-light);
+}
+
+.dropdown-item i {
+    width: 18px;
+    color: var(--accent-teal);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+}
+
+/* User Menu */
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-dropdown {
+    position: relative;
+}
+
+.user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 20px;
+    color: var(--text-light);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.user-trigger:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.user-dropdown .dropdown-menu {
+    min-width: 220px;
+}
+
+/* ============================================
+   Tools Panel
+   ============================================ */
+.tools-panel {
+    position: absolute;
+    top: 20px;
+    right: 100px;
+    width: 200px;
+    background: var(--panel-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-heavy);
+    z-index: 500;
+    display: none;
+    overflow: hidden;
+}
+
+.tools-panel.visible {
+    display: block;
+}
+
+.tools-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--primary-dark);
+    color: var(--text-light);
+}
+
+.tools-panel-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tools-panel-header h4 i {
+    color: var(--accent-teal);
+}
+
+.panel-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    transition: var(--transition-fast);
+}
+
+.panel-close:hover {
+    color: var(--text-light);
+}
+
+.tools-panel-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tool-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.tool-card:hover {
+    background: var(--text-light);
+    border-color: var(--accent-teal);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-light);
+}
+
+.tool-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.tool-icon.upload {
+    background: rgba(39, 174, 96, 0.15);
+    color: var(--accent-green);
+}
+
+.tool-icon.workspace {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+}
+
+.tool-icon.measure {
+    background: rgba(155, 89, 182, 0.15);
+    color: #9b59b6;
+}
+
+.tool-icon.draw {
+    background: rgba(241, 196, 15, 0.15);
+    color: #f1c40f;
+}
+
+.tool-icon.export {
+    background: rgba(231, 76, 60, 0.15);
+    color: var(--accent-coral);
+}
+
+.tool-icon.print {
+    background: rgba(26, 95, 122, 0.15);
+    color: var(--primary-medium);
+}
+
+.tool-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.tool-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.tool-desc {
+    font-size: 11px;
+    color: #6c757d;
+}
+
+/* ============================================
+   Admin Badge
+   ============================================ */
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: rgba(231, 76, 60, 0.2);
+    color: var(--accent-coral);
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+/* ============================================
+   Quick Stats Row in Dashboard
+   ============================================ */
+.quick-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-mini {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: var(--border-radius-sm);
+}
+
+.stat-mini-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-medium);
+}
+
+.stat-mini-label {
+    font-size: 10px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick Stats Card */
+.quick-stats-card {
+    width: 220px;
+}
+
+.quick-stats-card .card-header {
+    padding: 12px 14px;
+}
+
+.quick-stats-card .card-header-title i {
+    color: var(--accent-teal);
+}
+
+.quick-stats-card .card-body {
+    padding: 14px;
+}
+
+.quick-stats-card .quick-stats {
+    margin-bottom: 0;
+}
+
+/* ============================================
+   Responsive Dashboard
+   ============================================ */
+@media (max-width: 1400px) {
+    .dashboard-panel {
+        gap: 12px;
+    }
+
+    .analytics-card {
+        width: 280px;
+    }
+
+    .quick-stats-card {
+        width: 180px;
+    }
+
+    .live-stats-card {
+        width: 160px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .quick-stats-card {
+        display: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .tools-dropdown {
+        display: none;
+    }
+
+    .header-nav .nav-link span {
+        display: none;
+    }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+    .atlas-header,
+    .sidebar-left,
+    .sidebar-right,
+    .map-controls,
+    .base-layer-switcher,
+    .tools-panel,
+    .loading-overlay {
+        display: none !important;
+    }
+
+    .atlas-container {
+        position: static;
+        top: 0;
+    }
+
+    .map-container {
+        height: 100vh;
+        width: 100%;
+    }
+
+    .dashboard-panel {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        transform: none;
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 }

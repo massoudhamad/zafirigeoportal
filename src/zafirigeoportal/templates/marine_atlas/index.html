@@ -75,8 +75,43 @@
         </div>
 
         <div class="header-actions">
-            <a href="/account/signup/" class="btn-register">Register</a>
-            <a href="/account/login/" class="btn-login">Login</a>
+            <!-- Tools Dropdown -->
+            <div class="header-dropdown tools-dropdown" id="toolsDropdown">
+                <button class="dropdown-trigger tools-trigger">
+                    <i class="fas fa-tools"></i>
+                    <span>Tools</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <a href="/catalogue/#/upload/dataset" class="dropdown-item">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Upload Data</span>
+                    </a>
+                    <a href="/catalogue/#/search/?owner={{ user.username }}" class="dropdown-item" id="myWorkspaceLink">
+                        <i class="fas fa-folder-open"></i>
+                        <span>My Workspace</span>
+                    </a>
+                    <a href="#" class="dropdown-item" id="analysisToolsBtn">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analysis Tools</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/catalogue/#/search/?f=geostory" class="dropdown-item">
+                        <i class="fas fa-book-open"></i>
+                        <span>GeoStories</span>
+                    </a>
+                    <a href="/catalogue/#/search/?f=dashboard" class="dropdown-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboards</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- User Section -->
+            <div class="header-user" id="headerUser">
+                <!-- Will be populated by JavaScript based on auth state -->
+            </div>
+
             <div class="lang-toggle" id="langToggle">
                 <span class="lang-option active" data-lang="en">EN</span>
                 <span class="lang-separator">/</span>
@@ -317,7 +352,76 @@
                 <button class="map-control-btn" id="fullscreen" data-tooltip="Fullscreen">
                     <i class="fas fa-expand"></i>
                 </button>
+                <button class="map-control-btn tools-btn" id="toggleToolsPanel" data-tooltip="Quick Tools">
+                    <i class="fas fa-toolbox"></i>
+                </button>
             </div>
+
+            <!-- Right Tools Panel -->
+            <aside class="tools-panel" id="toolsPanel">
+                <div class="tools-panel-header">
+                    <h4><i class="fas fa-toolbox"></i> Quick Tools</h4>
+                    <button class="panel-close" id="closeToolsPanel">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="tools-panel-body">
+                    <a href="/catalogue/#/upload/dataset" class="tool-card">
+                        <div class="tool-icon upload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="tool-info">
+                            <span class="tool-name">Upload Data</span>
+                            <span class="tool-desc">Add new datasets</span>
+                        </div>
+                    </a>
+                    <a href="#" class="tool-card" id="workspaceTool">
+                        <div class="tool-icon workspace">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <div class="tool-info">
+                            <span class="tool-name">My Workspace</span>
+                            <span class="tool-desc">View your resources</span>
+                        </div>
+                    </a>
+                    <button class="tool-card" id="measureTool">
+                        <div class="tool-icon measure">
+                            <i class="fas fa-ruler-combined"></i>
+                        </div>
+                        <div class="tool-info">
+                            <span class="tool-name">Measure</span>
+                            <span class="tool-desc">Distance & area</span>
+                        </div>
+                    </button>
+                    <button class="tool-card" id="drawTool">
+                        <div class="tool-icon draw">
+                            <i class="fas fa-draw-polygon"></i>
+                        </div>
+                        <div class="tool-info">
+                            <span class="tool-name">Draw</span>
+                            <span class="tool-desc">Create features</span>
+                        </div>
+                    </button>
+                    <button class="tool-card" id="exportTool">
+                        <div class="tool-icon export">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <div class="tool-info">
+                            <span class="tool-name">Export</span>
+                            <span class="tool-desc">Download map</span>
+                        </div>
+                    </button>
+                    <button class="tool-card" id="printTool">
+                        <div class="tool-icon print">
+                            <i class="fas fa-print"></i>
+                        </div>
+                        <div class="tool-info">
+                            <span class="tool-name">Print</span>
+                            <span class="tool-desc">Print map view</span>
+                        </div>
+                    </button>
+                </div>
+            </aside>
 
             <!-- Bottom Dashboard Panel -->
             <div class="dashboard-panel">
@@ -378,6 +482,32 @@
                         <span class="temp-value" id="sstValue">28.5</span>
                         <span class="temp-unit">&deg;C</span>
                         <div class="stats-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Card -->
+                <div class="dashboard-card quick-stats-card">
+                    <div class="card-header">
+                        <div class="card-header-title">
+                            <i class="fas fa-fish"></i>
+                            <h4>Zanzibar Marine Stats</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-stats">
+                            <div class="stat-mini">
+                                <div class="stat-mini-value">923</div>
+                                <div class="stat-mini-label">km² MPA</div>
+                            </div>
+                            <div class="stat-mini">
+                                <div class="stat-mini-value">38K</div>
+                                <div class="stat-mini-label">Fishers</div>
+                            </div>
+                            <div class="stat-mini">
+                                <div class="stat-mini-value">6</div>
+                                <div class="stat-mini-label">MPAs</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
