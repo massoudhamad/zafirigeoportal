@@ -303,9 +303,13 @@ html, body {
 <script>
 (function() {
     var LOGO_URL = '{% static "img/zafiri_logo.svg" %}';
+    var navbarCreated = false;
 
     function createNavbar() {
-        if (document.getElementById('zafiri-navbar')) return;
+        // Check if navbar already exists
+        if (document.getElementById('zafiri-navbar')) {
+            return;
+        }
 
         var config = window.__GEONODE_CONFIG__ || {};
         var user = config.user || {};
@@ -350,7 +354,9 @@ html, body {
 
         nav.innerHTML = html;
         document.body.insertBefore(nav, document.body.firstChild);
+        navbarCreated = true;
 
+        // Setup search
         var search = document.getElementById('zn-search');
         if (search) {
             search.addEventListener('keypress', function(e) {
@@ -360,21 +366,60 @@ html, body {
             });
         }
 
+        // Setup language toggle
         nav.querySelectorAll('.zn-lang span[data-lang]').forEach(function(el) {
             el.addEventListener('click', function() {
                 document.cookie = 'django_language=' + this.dataset.lang + ';path=/';
                 location.reload();
             });
         });
+
+        console.log('ZAFIRI navbar created successfully');
     }
 
+    // Ensure navbar stays visible
+    function ensureNavbar() {
+        if (!document.getElementById('zafiri-navbar')) {
+            createNavbar();
+        }
+    }
+
+    // Create immediately
+    createNavbar();
+
+    // Run on DOMContentLoaded
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', createNavbar);
-    } else {
-        createNavbar();
     }
-    setTimeout(createNavbar, 100);
+
+    // Run multiple times to ensure navbar persists after React renders
+    setTimeout(createNavbar, 50);
+    setTimeout(createNavbar, 200);
     setTimeout(createNavbar, 500);
+    setTimeout(createNavbar, 1000);
+    setTimeout(createNavbar, 2000);
+    setTimeout(createNavbar, 3000);
+
+    // Watch for DOM changes and re-inject navbar if removed
+    var observer = new MutationObserver(function(mutations) {
+        if (!document.getElementById('zafiri-navbar')) {
+            createNavbar();
+        }
+    });
+
+    // Start observing after a short delay
+    setTimeout(function() {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: false
+        });
+    }, 1000);
+
+    // Also run on window load
+    window.addEventListener('load', function() {
+        setTimeout(ensureNavbar, 100);
+        setTimeout(ensureNavbar, 500);
+    });
 })();
 </script>
 {% endblock %}
