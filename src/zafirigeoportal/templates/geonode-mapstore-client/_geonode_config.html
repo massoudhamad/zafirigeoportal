@@ -25,7 +25,7 @@
 
 {% block extra_style %}
 <style>
-/* Hide GeoNode default navbar */
+/* Hide ALL GeoNode/MapStore default navbars */
 .gn-brand-navbar,
 nav.gn-menu,
 .gn-main-header,
@@ -33,7 +33,28 @@ nav.gn-menu,
 .gn-main-header-wrapper,
 header.gn-main-header,
 .gn-menu-content,
-.gn-brand-navbar-container {
+.gn-brand-navbar-container,
+.gn-main-event-container > nav,
+.gn-main-event-container > header,
+.gn-navigation-bar,
+.navbar-header,
+.gn-home-section-header,
+[class*="gn-brand"],
+[class*="gn-navbar"],
+[class*="gn-menu"],
+.ms-header,
+.mapstore-header,
+header[class*="gn-"],
+nav[class*="gn-"] {
+    display: none !important;
+}
+
+/* Also hide the MapStore catalogue header bar */
+.gn-search-bar-container > .gn-main-header,
+.gn-details-panel-header,
+.gn-hero-section,
+#ms-container > header,
+.gn-home-section > header {
     display: none !important;
 }
 
