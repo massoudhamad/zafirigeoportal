@@ -50,7 +50,11 @@
             const queryString = params.toString();
             if (queryString) url += '?' + queryString;
 
-            return fetch(url)
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'omit' // Don't send cookies to external APIs
+            })
                 .then(response => {
                     if (!response.ok) throw new Error('Failed to fetch datasets');
                     return response.json();
