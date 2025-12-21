@@ -716,30 +716,46 @@
         const userContainer = document.getElementById('headerUser');
         if (!userContainer) return;
 
-        // Fetch user info from GeoNode API with credentials
-        fetch('/api/v2/users/info/', {
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json'
+        // Check for user info from GeoNode config first (avoids extra API call)
+        if (window.__GEONODE_CONFIG__ && window.__GEONODE_CONFIG__.user) {
+            const user = window.__GEONODE_CONFIG__.user;
+            if (user && user.pk) {
+                renderAuthenticatedUser(userContainer, user);
+                updateWorkspaceLinks(user.username);
+                return;
             }
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('Not authenticated');
-                return response.json();
-            })
-            .then(data => {
-                // Handle both response formats
-                const user = data.user || data;
-                if (user && (user.pk || user.username)) {
-                    renderAuthenticatedUser(userContainer, user);
-                    updateWorkspaceLinks(user.username);
+        }
+
+        // Fallback: Fetch user info from GeoNode API
+        // Use XMLHttpRequest to prevent HTTP Basic Auth popup
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/v2/users/info/', true);
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.withCredentials = true;
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        const user = data.user || data;
+                        if (user && (user.pk || user.username)) {
+                            renderAuthenticatedUser(userContainer, user);
+                            updateWorkspaceLinks(user.username);
+                        } else {
+                            renderGuestUser(userContainer);
+                        }
+                    } catch (e) {
+                        renderGuestUser(userContainer);
+                    }
                 } else {
                     renderGuestUser(userContainer);
                 }
-            })
-            .catch(() => {
-                renderGuestUser(userContainer);
-            });
+            }
+        };
+
+        xhr.send();
     }
 
     function renderAuthenticatedUser(container, user) {
@@ -926,349 +942,6 @@
     }
 
     // ============================================
-    // External Data Loader Integration
-    // ============================================
-    const UTU_API = 'https://geodata.utu.fi/api/v2/datasets';
-    let externalDataState = {
-        datasets: [],
-        currentPage: 1,
-        totalPages: 1,
-        pageSize: 10,
-        searchTerm: ''
-    };
-
-    function setupExternalDataLoader() {
-        // Initialize the external data loader
-        if (window.ExternalDataLoader) {
-            ExternalDataLoader.init();
-        }
-
-        // UTU GeoNode button
-        const loadUTUBtn = document.getElementById('loadUTUData');
-        if (loadUTUBtn) {
-            loadUTUBtn.addEventListener('click', function() {
-                openExternalDataModal();
-                loadExternalDatasets();
-            });
-        }
-
-        // Browse external data button
-        const browseBtn = document.getElementById('browseExternalData');
-        if (browseBtn) {
-            browseBtn.addEventListener('click', function() {
-                openExternalDataModal();
-                loadExternalDatasets();
-            });
-        }
-
-        // Modal close button
-        const closeModalBtn = document.getElementById('closeExternalModal');
-        if (closeModalBtn) {
-            closeModalBtn.addEventListener('click', closeExternalDataModal);
-        }
-
-        // Close modal on overlay click
-        const modal = document.getElementById('externalDataModal');
-        if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeExternalDataModal();
-                }
-            });
-        }
-
-        // Source tabs
-        const sourceTabs = document.querySelectorAll('.source-tab');
-        sourceTabs.forEach(function(tab) {
-            tab.addEventListener('click', function() {
-                sourceTabs.forEach(function(t) { t.classList.remove('active'); });
-                this.classList.add('active');
-
-                const source = this.dataset.source;
-                document.getElementById('utuContent').classList.toggle('hidden', source !== 'utu');
-                document.getElementById('customContent').classList.toggle('hidden', source !== 'custom');
-            });
-        });
-
-        // Search in modal
-        const searchInput = document.getElementById('externalSearchInput');
-        const searchBtn = document.getElementById('externalSearchBtn');
-
-        if (searchInput) {
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    externalDataState.searchTerm = this.value;
-                    externalDataState.currentPage = 1;
-                    loadExternalDatasets();
-                }
-            });
-        }
-
-        if (searchBtn) {
-            searchBtn.addEventListener('click', function() {
-                externalDataState.searchTerm = searchInput.value;
-                externalDataState.currentPage = 1;
-                loadExternalDatasets();
-            });
-        }
-
-        // Pagination
-        const prevBtn = document.getElementById('prevPage');
-        const nextBtn = document.getElementById('nextPage');
-
-        if (prevBtn) {
-            prevBtn.addEventListener('click', function() {
-                if (externalDataState.currentPage > 1) {
-                    externalDataState.currentPage--;
-                    loadExternalDatasets();
-                }
-            });
-        }
-
-        if (nextBtn) {
-            nextBtn.addEventListener('click', function() {
-                if (externalDataState.currentPage < externalDataState.totalPages) {
-                    externalDataState.currentPage++;
-                    loadExternalDatasets();
-                }
-            });
-        }
-
-        // Custom layer form
-        const addCustomBtn = document.getElementById('addCustomLayer');
-        if (addCustomBtn) {
-            addCustomBtn.addEventListener('click', addCustomExternalLayer);
-        }
-    }
-
-    function openExternalDataModal() {
-        const modal = document.getElementById('externalDataModal');
-        if (modal) {
-            modal.classList.add('active');
-        }
-    }
-
-    function closeExternalDataModal() {
-        const modal = document.getElementById('externalDataModal');
-        if (modal) {
-            modal.classList.remove('active');
-        }
-    }
-
-    function loadExternalDatasets() {
-        const loading = document.getElementById('datasetsLoading');
-        const list = document.getElementById('datasetsList');
-
-        if (loading) loading.classList.add('active');
-        if (list) list.innerHTML = '';
-
-        const options = {
-            page: externalDataState.currentPage,
-            page_size: externalDataState.pageSize
-        };
-
-        if (externalDataState.searchTerm) {
-            options.search = externalDataState.searchTerm;
-        }
-
-        if (window.ExternalDataLoader) {
-            ExternalDataLoader.fetchDatasets(UTU_API, options)
-                .then(function(result) {
-                    externalDataState.datasets = result.datasets;
-                    externalDataState.totalPages = Math.ceil(result.total / externalDataState.pageSize);
-                    renderDatasetsList(result.datasets);
-                    updatePagination();
-                })
-                .catch(function(error) {
-                    console.error('Failed to load datasets:', error);
-                    if (list) {
-                        list.innerHTML = '<p class="no-layers-text">Failed to load datasets. Please try again.</p>';
-                    }
-                })
-                .finally(function() {
-                    if (loading) loading.classList.remove('active');
-                });
-        }
-    }
-
-    function renderDatasetsList(datasets) {
-        const list = document.getElementById('datasetsList');
-        if (!list) return;
-
-        if (!datasets || datasets.length === 0) {
-            list.innerHTML = '<p class="no-layers-text">No datasets found</p>';
-            return;
-        }
-
-        list.innerHTML = datasets.map(function(dataset) {
-            const isLoaded = ExternalDataLoader.loadedLayers[dataset.alternate || dataset.name];
-            return '<div class="dataset-item">' +
-                '<div class="dataset-info">' +
-                '<div class="dataset-title">' + (dataset.title || dataset.name) + '</div>' +
-                '<div class="dataset-meta">' +
-                '<span><i class="fas fa-user"></i> ' + (dataset.owner?.username || 'Unknown') + '</span>' +
-                '<span><i class="fas fa-calendar"></i> ' + (dataset.date ? new Date(dataset.date).toLocaleDateString() : 'N/A') + '</span>' +
-                '</div>' +
-                '</div>' +
-                '<div class="dataset-actions">' +
-                '<button class="btn-add-layer' + (isLoaded ? ' added' : '') + '" ' +
-                'data-dataset-id="' + (dataset.pk || dataset.id) + '" ' +
-                'data-dataset-name="' + (dataset.alternate || dataset.name) + '" ' +
-                'data-dataset-title="' + (dataset.title || dataset.name) + '"' +
-                (isLoaded ? ' disabled' : '') + '>' +
-                '<i class="fas ' + (isLoaded ? 'fa-check' : 'fa-plus') + '"></i> ' +
-                (isLoaded ? 'Added' : 'Add') +
-                '</button>' +
-                '</div>' +
-                '</div>';
-        }).join('');
-
-        // Attach click handlers
-        list.querySelectorAll('.btn-add-layer:not(:disabled)').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const datasetName = this.dataset.datasetName;
-                const datasetTitle = this.dataset.datasetTitle;
-                addExternalLayer(datasetName, datasetTitle, this);
-            });
-        });
-    }
-
-    function updatePagination() {
-        const prevBtn = document.getElementById('prevPage');
-        const nextBtn = document.getElementById('nextPage');
-        const pageInfo = document.getElementById('pageInfo');
-
-        if (prevBtn) prevBtn.disabled = externalDataState.currentPage <= 1;
-        if (nextBtn) nextBtn.disabled = externalDataState.currentPage >= externalDataState.totalPages;
-        if (pageInfo) pageInfo.textContent = 'Page ' + externalDataState.currentPage + ' of ' + externalDataState.totalPages;
-    }
-
-    function addExternalLayer(layerName, title, buttonEl) {
-        if (!window.ExternalDataLoader || !map) return;
-
-        // Add WMS layer from UTU GeoNode
-        const layer = ExternalDataLoader.loadFromGeoNode(map, 'https://geodata.utu.fi', layerName, {
-            title: title,
-            visible: true,
-            opacity: 0.7
-        });
-
-        if (layer) {
-            // Update button state
-            if (buttonEl) {
-                buttonEl.classList.add('added');
-                buttonEl.disabled = true;
-                buttonEl.innerHTML = '<i class="fas fa-check"></i> Added';
-            }
-
-            // Update sidebar list
-            updateExternalLayersList();
-
-            console.log('Added external layer:', title);
-        }
-    }
-
-    function addCustomExternalLayer() {
-        const url = document.getElementById('customGeoNodeUrl').value;
-        const layerName = document.getElementById('customLayerName').value;
-        const title = document.getElementById('customLayerTitle').value || layerName;
-        const serviceType = document.getElementById('customServiceType').value;
-
-        if (!url || !layerName) {
-            alert('Please enter both URL and Layer Name');
-            return;
-        }
-
-        if (!window.ExternalDataLoader || !map) return;
-
-        if (serviceType === 'wms') {
-            ExternalDataLoader.addWMSLayer(map, {
-                url: url,
-                layerName: layerName,
-                title: title,
-                visible: true,
-                opacity: 0.7
-            });
-        } else {
-            ExternalDataLoader.addWFSLayer(map, {
-                url: url,
-                layerName: layerName,
-                title: title,
-                visible: true
-            });
-        }
-
-        // Clear form
-        document.getElementById('customGeoNodeUrl').value = '';
-        document.getElementById('customLayerName').value = '';
-        document.getElementById('customLayerTitle').value = '';
-
-        // Update sidebar
-        updateExternalLayersList();
-
-        // Close modal
-        closeExternalDataModal();
-    }
-
-    function updateExternalLayersList() {
-        const list = document.getElementById('externalLayersList');
-        if (!list || !window.ExternalDataLoader) return;
-
-        const loadedLayers = ExternalDataLoader.getLoadedLayers();
-        const layerKeys = Object.keys(loadedLayers);
-
-        if (layerKeys.length === 0) {
-            list.innerHTML = '<p class="no-layers-text">No external layers loaded</p>';
-            return;
-        }
-
-        list.innerHTML = layerKeys.map(function(key) {
-            const layer = loadedLayers[key];
-            const title = layer.get('title') || key;
-            const visible = layer.getVisible();
-
-            return '<div class="external-layer-item">' +
-                '<div class="external-layer-info">' +
-                '<i class="fas fa-layer-group"></i>' +
-                '<span class="external-layer-name" title="' + title + '">' + title + '</span>' +
-                '</div>' +
-                '<div class="external-layer-actions">' +
-                '<button class="external-layer-btn toggle" data-layer="' + key + '" title="Toggle visibility">' +
-                '<i class="fas fa-eye' + (visible ? '' : '-slash') + '"></i>' +
-                '</button>' +
-                '<button class="external-layer-btn remove" data-layer="' + key + '" title="Remove layer">' +
-                '<i class="fas fa-trash"></i>' +
-                '</button>' +
-                '</div>' +
-                '</div>';
-        }).join('');
-
-        // Attach event handlers
-        list.querySelectorAll('.toggle').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const layerId = this.dataset.layer;
-                const isVisible = ExternalDataLoader.toggleLayer(layerId);
-                this.querySelector('i').className = 'fas fa-eye' + (isVisible ? '' : '-slash');
-            });
-        });
-
-        list.querySelectorAll('.remove').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const layerId = this.dataset.layer;
-                ExternalDataLoader.removeLayer(map, layerId);
-                updateExternalLayersList();
-                // Re-enable the add button in the modal if present
-                const addBtn = document.querySelector('.btn-add-layer[data-dataset-name="' + layerId + '"]');
-                if (addBtn) {
-                    addBtn.classList.remove('added');
-                    addBtn.disabled = false;
-                    addBtn.innerHTML = '<i class="fas fa-plus"></i> Add';
-                }
-            });
-        });
-    }
-
-    // ============================================
     // Initialize Application
     // ============================================
     function init() {
@@ -1281,8 +954,7 @@
         setupDashboard();
         setupUserMenu();
         setupToolsPanel();
-        setupDropdownBehavior(); // Setup initial dropdowns (tools dropdown)
-        setupExternalDataLoader(); // Setup external data loading
+        setupDropdownBehavior();
 
         console.log('ZAFIRI Marine Atlas initialized successfully');
     }

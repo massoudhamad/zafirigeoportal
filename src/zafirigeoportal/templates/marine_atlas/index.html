@@ -297,32 +297,6 @@
                     </div>
                 </div>
 
-                <!-- External Data Layer Group -->
-                <div class="layer-group" data-group="external">
-                    <div class="layer-group-header">
-                        <div class="layer-group-title">
-                            <i class="fas fa-globe layer-group-icon"></i>
-                            <h4>External Data</h4>
-                        </div>
-                        <i class="fas fa-chevron-down layer-group-toggle"></i>
-                    </div>
-                    <div class="layer-items">
-                        <div class="external-data-controls">
-                            <button class="external-data-btn" id="loadUTUData">
-                                <i class="fas fa-university"></i>
-                                <span>UTU GeoNode</span>
-                            </button>
-                            <button class="external-data-btn" id="browseExternalData">
-                                <i class="fas fa-search"></i>
-                                <span>Browse Datasets</span>
-                            </button>
-                        </div>
-                        <div class="external-layers-list" id="externalLayersList">
-                            <!-- Loaded external layers will appear here -->
-                            <p class="no-layers-text">No external layers loaded</p>
-                        </div>
-                    </div>
-                </div>
             </aside>
 
             <!-- Right Sidebar - Island Navigation -->
@@ -553,80 +527,11 @@
         </div>
     </div>
 
-    <!-- External Data Browser Modal -->
-    <div class="modal-overlay" id="externalDataModal">
-        <div class="modal-dialog external-data-dialog">
-            <div class="modal-header">
-                <h3><i class="fas fa-globe"></i> External Data Browser</h3>
-                <button class="modal-close" id="closeExternalModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="external-source-tabs">
-                    <button class="source-tab active" data-source="utu">
-                        <i class="fas fa-university"></i> UTU GeoNode
-                    </button>
-                    <button class="source-tab" data-source="custom">
-                        <i class="fas fa-link"></i> Custom URL
-                    </button>
-                </div>
-
-                <div class="source-content" id="utuContent">
-                    <div class="search-bar">
-                        <input type="text" id="externalSearchInput" placeholder="Search datasets...">
-                        <button id="externalSearchBtn"><i class="fas fa-search"></i></button>
-                    </div>
-                    <div class="datasets-loading" id="datasetsLoading">
-                        <div class="loading-spinner small"></div>
-                        <span>Loading datasets...</span>
-                    </div>
-                    <div class="datasets-list" id="datasetsList">
-                        <!-- Datasets will be loaded here -->
-                    </div>
-                    <div class="datasets-pagination" id="datasetsPagination">
-                        <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
-                        <span id="pageInfo">Page 1</span>
-                        <button id="nextPage"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
-
-                <div class="source-content hidden" id="customContent">
-                    <div class="custom-url-form">
-                        <div class="form-group">
-                            <label>GeoNode/GeoServer URL</label>
-                            <input type="text" id="customGeoNodeUrl" placeholder="https://example.com/geoserver/ows">
-                        </div>
-                        <div class="form-group">
-                            <label>Layer Name</label>
-                            <input type="text" id="customLayerName" placeholder="workspace:layer_name">
-                        </div>
-                        <div class="form-group">
-                            <label>Display Title</label>
-                            <input type="text" id="customLayerTitle" placeholder="My Custom Layer">
-                        </div>
-                        <div class="form-group">
-                            <label>Service Type</label>
-                            <select id="customServiceType">
-                                <option value="wms">WMS (Image Tiles)</option>
-                                <option value="wfs">WFS (Vector Features)</option>
-                            </select>
-                        </div>
-                        <button class="btn-primary" id="addCustomLayer">
-                            <i class="fas fa-plus"></i> Add Layer
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- OpenLayers JS -->
     <script src="https://cdn.jsdelivr.net/npm/ol@8.2.0/dist/ol.js"></script>
 
     <!-- Marine Atlas JavaScript -->
     <script src="{% static 'js/zanzibar_geodata.js' %}"></script>
-    <script src="{% static 'js/external_data_loader.js' %}"></script>
     <script src="{% static 'js/marine_atlas.js' %}"></script>
 </body>
 </html>
